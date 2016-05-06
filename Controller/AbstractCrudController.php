@@ -2,6 +2,7 @@
 
 namespace Modera\ServerCrudBundle\Controller;
 
+use Doctrine\Common\Util\Debug;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\NoResultException;
 use Modera\ServerCrudBundle\DataMapping\DataMapperInterface;
@@ -165,6 +166,17 @@ abstract class AbstractCrudController extends AbstractBaseController implements 
      */
     private function getDataMapper()
     {
+        $config = $this->getPreparedConfig();
+
+        if (array_key_exists('data_mapper', $config) && $config['data_mapper']) {
+
+            if (!$this->container->has($config['data_mapper'])) {
+                throw new \RuntimeException("'data_mapper' configuration property exists, but no service with such id found.");
+            }
+
+            return $this->container->get($config['data_mapper']);
+        }
+
         return $this->getConfiguredService('data_mapper');
     }
 
