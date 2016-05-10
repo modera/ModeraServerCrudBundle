@@ -84,6 +84,10 @@ abstract class AbstractCrudController extends AbstractBaseController implements 
             'format_new_entity_values' => function (array $params, array $config, NewValuesFactoryInterface $defaultImpl, ContainerInterface $container) {
                 return $defaultImpl->getValues($params, $config);
             },
+            // allows to override default data mapper used by the this specific controller
+            'create_default_data_mapper' => function(ContainerInterface $container) {
+                return $this->getConfiguredService('data_mapper');
+            },
             // optional
             'ignore_standard_validator' => false,
             // optional
@@ -170,24 +174,7 @@ abstract class AbstractCrudController extends AbstractBaseController implements 
     {
         $config = $this->getPreparedConfig();
 
-        /**
-         * !!! Please note that service Id of $config['data_mapper'] will be different from
-         * $this->container->get('data_mapper'];.
-         *
-         * $config['data_mapper'] is set inside Controller getConfig, and do not affect/overwrite service that defined
-         * in modera_server_crud.data_mapping.default_data_mapper service
-         *
-         * That allow to use custom data mapper and default data mapper simultaneously.
-         */
-        if (array_key_exists('data_mapper', $config) && $config['data_mapper']) {
-            if (!$this->container->has($config['data_mapper'])) {
-                throw new \RuntimeException("'data_mapper' configuration property exists, but no service with such id found.");
-            }
-
-            return $this->container->get($config['data_mapper']);
-        }
-
-        return $this->getConfiguredService('data_mapper');
+        return call_user_func($config['create_default_data_mapper'], $this->container);
     }
 
     /**

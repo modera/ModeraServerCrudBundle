@@ -5,6 +5,7 @@ namespace Modera\ServerCrudBundle\Tests\Unit\Controller;
 use Modera\ServerCrudBundle\DependencyInjection\ModeraServerCrudExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Modera\ServerCrudBundle\Controller\AbstractCrudController;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @author    Alex Plaksin <alex.plaksin@modera.net>
@@ -35,7 +36,7 @@ class AbstractCrudControllerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \RuntimeException
+     * @expectedException \Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException
      */
     public function testGetDataMapper_InConfigParameter_ServiceNotPresentInDIContainer()
     {
@@ -53,7 +54,9 @@ class AbstractCrudControllerTest extends \PHPUnit_Framework_TestCase
         $controller->setContainer($container);
 
         \Phake::when($controller)->getConfig()->thenReturn(
-            array('data_mapper' => 'nonExistingService', 'entity' => 'testValue', 'hydration' => 'testValue')
+            array('create_default_data_mapper' => function(ContainerInterface $container) {
+                return $container->get('nonExistingService');
+            }, 'entity' => 'testValue', 'hydration' => 'testValue')
         );
 
         \Phake::makeVisible($controller)->getDataMapper();
@@ -77,7 +80,11 @@ class AbstractCrudControllerTest extends \PHPUnit_Framework_TestCase
         $controller->setContainer($container);
 
         \Phake::when($controller)->getConfig()->thenReturn(
-            array('data_mapper' => 'existingService', 'entity' => 'testValue', 'hydration' => 'testValue')
+            array(
+                'create_default_data_mapper' => function(ContainerInterface $container) {
+                    return $container->get('existingService');
+                },
+                'entity' => 'testValue', 'hydration' => 'testValue')
         );
 
         $this->assertTrue(\Phake::makeVisible($controller)->getDataMapper());
