@@ -2,18 +2,15 @@
 
 namespace Modera\ServerCrudBundle\Controller;
 
-use Doctrine\Common\Util\Debug;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\NoResultException;
 use Modera\ServerCrudBundle\DataMapping\DataMapperInterface;
 use Modera\ServerCrudBundle\DependencyInjection\ModeraServerCrudExtension;
 use Modera\ServerCrudBundle\EntityFactory\EntityFactoryInterface;
 use Modera\ServerCrudBundle\ExceptionHandling\ExceptionHandlerInterface;
+use Modera\ServerCrudBundle\Exceptions\BadConfigException;
 use Modera\ServerCrudBundle\Exceptions\BadRequestException;
 use Modera\ServerCrudBundle\Exceptions\MoreThanOneResultException;
 use Modera\ServerCrudBundle\Exceptions\NothingFoundException;
 use Modera\ServerCrudBundle\Hydration\HydrationService;
-use Modera\ServerCrudBundle\Intercepting\ControllerActionsInterceptorInterface;
 use Modera\ServerCrudBundle\Intercepting\InterceptorsManager;
 use Modera\ServerCrudBundle\NewValuesFactory\NewValuesFactoryInterface;
 use Modera\ServerCrudBundle\Persistence\ModelManagerInterface;
@@ -24,9 +21,7 @@ use Modera\ServerCrudBundle\Validation\ValidationResult;
 use Modera\FoundationBundle\Controller\AbstractBaseController;
 use Modera\DirectBundle\Annotation\Remote;
 use Sli\AuxBundle\Util\Toolkit;
-use Sli\ExpanderBundle\Ext\ContributorInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * Class provides tools for fulfilling CRUD operations.
@@ -56,43 +51,43 @@ abstract class AbstractCrudController extends AbstractBaseController implements 
     public function getPreparedConfig()
     {
         $defaultConfig = array(
-            'create_entity' => function(array $params, array $config, EntityFactoryInterface $defaultFactory, ContainerInterface $container) {
+            'create_entity' => function (array $params, array $config, EntityFactoryInterface $defaultFactory, ContainerInterface $container) {
                 return $defaultFactory->create($params, $config);
             },
-            'map_data_on_create' => function(array $params, $entity, DataMapperInterface $defaultMapper, ContainerInterface $container) {
+            'map_data_on_create' => function (array $params, $entity, DataMapperInterface $defaultMapper, ContainerInterface $container) {
                 $defaultMapper->mapData($params, $entity);
             },
-            'map_data_on_update' => function(array $params, $entity, DataMapperInterface $defaultMapper, ContainerInterface $container) {
+            'map_data_on_update' => function (array $params, $entity, DataMapperInterface $defaultMapper, ContainerInterface $container) {
                 $defaultMapper->mapData($params, $entity);
             },
-            'new_entity_validator' => function(array $params, $mappedEntity, DefaultEntityValidator $defaultValidator, array $config, ContainerInterface $container) {
+            'new_entity_validator' => function (array $params, $mappedEntity, DefaultEntityValidator $defaultValidator, array $config, ContainerInterface $container) {
                 return $defaultValidator->validate($mappedEntity, $config);
             },
-            'updated_entity_validator' => function(array $params, $mappedEntity, DefaultEntityValidator $defaultValidator, array $config, ContainerInterface $container) {
+            'updated_entity_validator' => function (array $params, $mappedEntity, DefaultEntityValidator $defaultValidator, array $config, ContainerInterface $container) {
                 return $defaultValidator->validate($mappedEntity, $config);
             },
-            'save_entity_handler' => function($entity, array $params, PersistenceHandlerInterface $defaultHandler, ContainerInterface $container) {
+            'save_entity_handler' => function ($entity, array $params, PersistenceHandlerInterface $defaultHandler, ContainerInterface $container) {
                 return $defaultHandler->save($entity);
             },
-            'update_entity_handler' => function($entity, array $params, PersistenceHandlerInterface $defaultHandler, ContainerInterface $container) {
+            'update_entity_handler' => function ($entity, array $params, PersistenceHandlerInterface $defaultHandler, ContainerInterface $container) {
                 return $defaultHandler->update($entity);
             },
-            'batch_update_entities_handler' => function(array $entities, array $params, PersistenceHandlerInterface $defaultHandler, ContainerInterface $container) {
+            'batch_update_entities_handler' => function (array $entities, array $params, PersistenceHandlerInterface $defaultHandler, ContainerInterface $container) {
                 return $defaultHandler->updateBatch($entities);
             },
-            'remove_entities_handler' => function(array $entities, array $params, PersistenceHandlerInterface $defaultHandler, ContainerInterface $container) {
+            'remove_entities_handler' => function (array $entities, array $params, PersistenceHandlerInterface $defaultHandler, ContainerInterface $container) {
                 return $defaultHandler->remove($entities);
             },
-            'exception_handler' => function(\Exception $e, $operation, ExceptionHandlerInterface $defaultHandler, ContainerInterface $container) {
+            'exception_handler' => function (\Exception $e, $operation, ExceptionHandlerInterface $defaultHandler, ContainerInterface $container) {
                 return $defaultHandler->createResponse($e, $operation);
             },
-            'format_new_entity_values' => function(array $params, array $config, NewValuesFactoryInterface $defaultImpl, ContainerInterface $container) {
+            'format_new_entity_values' => function (array $params, array $config, NewValuesFactoryInterface $defaultImpl, ContainerInterface $container) {
                 return $defaultImpl->getValues($params, $config);
             },
             // optional
             'ignore_standard_validator' => false,
             // optional
-            'entity_validation_method' => 'validate'
+            'entity_validation_method' => 'validate',
         );
 
         $config = array_merge($defaultConfig, $this->getConfig());
@@ -128,13 +123,20 @@ abstract class AbstractCrudController extends AbstractBaseController implements 
 
     /**
      * @param string $serviceType
+     *
      * @return object
      */
     private function getConfiguredService($serviceType)
     {
         $config = $this->container->getParameter(ModeraServerCrudExtension::CONFIG_KEY);
 
-        return $this->container->get($config[$serviceType]);
+        try {
+            $serviceId = $config[$serviceType];
+
+            return $this->container->get($serviceId);
+        } catch (\Exception $e) {
+            throw BadConfigException::create($serviceType, $config, $e);
+        }
     }
 
     /**
@@ -168,8 +170,16 @@ abstract class AbstractCrudController extends AbstractBaseController implements 
     {
         $config = $this->getPreparedConfig();
 
+        /**
+         * !!! Please note that service Id of $config['data_mapper'] will be different from
+         * $this->container->get('data_mapper'];.
+         *
+         * $config['data_mapper'] is set inside Controller getConfig, and do not affect/overwrite service that defined
+         * in modera_server_crud.data_mapping.default_data_mapper service
+         *
+         * That allow to use custom data mapper and default data mapper simultaneously.
+         */
         if (array_key_exists('data_mapper', $config) && $config['data_mapper']) {
-
             if (!$this->container->has($config['data_mapper'])) {
                 throw new \RuntimeException("'data_mapper' configuration property exists, but no service with such id found.");
             }
@@ -272,7 +282,7 @@ abstract class AbstractCrudController extends AbstractBaseController implements 
     }
 
     /**
-     * @param array $params
+     * @param array  $params
      * @param object $entity
      * @param string $operationType
      *
@@ -282,9 +292,9 @@ abstract class AbstractCrudController extends AbstractBaseController implements 
     {
         $config = $this->getPreparedConfig();
 
-        $dataMapper = $config['map_data_on_' . $operationType];
-        $persistenceHandler = $config[('create' == $operationType ? 'save' : 'update') . '_entity_handler'];
-        $validator = $config[('create' == $operationType ? 'new' : 'updated') . '_entity_validator'];
+        $dataMapper = $config['map_data_on_'.$operationType];
+        $persistenceHandler = $config[('create' == $operationType ? 'save' : 'update').'_entity_handler'];
+        $validator = $config[('create' == $operationType ? 'new' : 'updated').'_entity_validator'];
 
         if ($dataMapper) {
             $dataMapper($params['record'], $entity, $this->getDataMapper(), $this->container);
@@ -295,7 +305,7 @@ abstract class AbstractCrudController extends AbstractBaseController implements 
             $validationResult = $validator($params, $entity, $this->getEntityValidator(), $config, $this->container);
             if ($validationResult->hasErrors()) {
                 return array_merge($validationResult->toArray(), array(
-                    'success' => false
+                    'success' => false,
                 ));
             }
         }
@@ -304,7 +314,7 @@ abstract class AbstractCrudController extends AbstractBaseController implements 
         $operationResult = $persistenceHandler($entity, $params, $this->getPersistenceHandler(), $this->container);
 
         $response = array(
-            'success' => true
+            'success' => true,
         );
 
         $response = array_merge($response, $operationResult->toArray($this->getModelManager()));
@@ -366,7 +376,7 @@ abstract class AbstractCrudController extends AbstractBaseController implements 
 
             return array(
                 'success' => true,
-                'result' => $hydratedEntity
+                'result' => $hydratedEntity,
             );
         } catch (\Exception $e) {
             return $this->createExceptionResponse($e, ExceptionHandlerInterface::OPERATION_GET);
@@ -395,7 +405,7 @@ abstract class AbstractCrudController extends AbstractBaseController implements 
             return array(
                 'success' => true,
                 'items' => $hydratedItems,
-                'total' => $total
+                'total' => $total,
             );
         } catch (\Exception $e) {
             return $this->createExceptionResponse($e, ExceptionHandlerInterface::OPERATION_LIST);
@@ -482,14 +492,14 @@ abstract class AbstractCrudController extends AbstractBaseController implements 
                 if (isset($recordParams[$fieldName])) {
                     $query[] = array(
                         'property' => $fieldName,
-                        'value' => 'eq:' . $recordParams[$fieldName]
+                        'value' => 'eq:'.$recordParams[$fieldName],
                     );
                 } else {
                     $missingPkFields[] = $fieldName;
                 }
             }
             if (count($missingPkFields)) {
-                $e = new BadRequestException('These primary key fields were not provided: ' . implode(', ', $missingPkFields));
+                $e = new BadRequestException('These primary key fields were not provided: '.implode(', ', $missingPkFields));
                 $e->setParams($params);
                 $e->setPath('/');
 
@@ -520,9 +530,8 @@ abstract class AbstractCrudController extends AbstractBaseController implements 
 
             $this->interceptAction('batchUpdate', $params);
 
-            if (   isset($params['queries']) && is_array($params['queries'])
+            if (isset($params['queries']) && is_array($params['queries'])
                 && isset($params['record']) && is_array($params['record'])) {
-
                 if (!isset($params['record'])) {
                     $e = new BadRequestException("'/record' hasn't been provided");
                     $e->setParams($params);
@@ -548,13 +557,13 @@ abstract class AbstractCrudController extends AbstractBaseController implements 
                             $pkFields = $this->getPersistenceHandler()->resolveEntityPrimaryKeyFields($config['entity']);
 
                             $ids = array();
-                            foreach($pkFields as $fieldName) {
+                            foreach ($pkFields as $fieldName) {
                                 $ids[$fieldName] = Toolkit::getPropertyValue($entity, $fieldName);
                             }
 
                             $errors[] = array(
                                 'id' => $ids,
-                                'errors' => $validationResult->toArray()
+                                'errors' => $validationResult->toArray(),
                             );
                         }
                     }
@@ -564,15 +573,15 @@ abstract class AbstractCrudController extends AbstractBaseController implements 
                     $operationResult = $persistenceHandler($entities, $params, $this->getPersistenceHandler(), $this->container);
 
                     return array_merge($operationResult->toArray($this->getModelManager()), array(
-                        'success' => true
+                        'success' => true,
                     ));
                 } else {
                     return array(
                         'success' => false,
-                        'errors' => $errors
+                        'errors' => $errors,
                     );
                 }
-            } else if (isset($params['records']) && is_array($params['records'])) {
+            } elseif (isset($params['records']) && is_array($params['records'])) {
                 $entities = array();
                 $errors = array();
                 foreach ($params['records'] as $recordParams) {
@@ -582,7 +591,7 @@ abstract class AbstractCrudController extends AbstractBaseController implements 
                         if (isset($recordParams[$fieldName])) {
                             $query[] = array(
                                 'property' => $fieldName,
-                                'value' => 'eq:' . $recordParams[$fieldName]
+                                'value' => 'eq:'.$recordParams[$fieldName],
                             );
                         } else {
                             $missingPkFields[] = $fieldName;
@@ -605,13 +614,13 @@ abstract class AbstractCrudController extends AbstractBaseController implements 
                                 $pkFields = $this->getPersistenceHandler()->resolveEntityPrimaryKeyFields($config['entity']);
 
                                 $ids = array();
-                                foreach($pkFields as $fieldName) {
+                                foreach ($pkFields as $fieldName) {
                                     $ids[$fieldName] = Toolkit::getPropertyValue($entity, $fieldName);
                                 }
 
                                 $errors[] = array(
                                     'id' => $ids,
-                                    'errors' => $validationResult->toArray()
+                                    'errors' => $validationResult->toArray(),
                                 );
                             }
                         }
@@ -622,12 +631,12 @@ abstract class AbstractCrudController extends AbstractBaseController implements 
                     $operationResult = $persistenceHandler($entities, $params, $this->getPersistenceHandler(), $this->container);
 
                     return array_merge($operationResult->toArray($this->getModelManager()), array(
-                        'success' => true
+                        'success' => true,
                     ));
                 } else {
                     return array(
                         'success' => false,
-                        'errors' => $errors
+                        'errors' => $errors,
                     );
                 }
             } else {
@@ -644,7 +653,7 @@ abstract class AbstractCrudController extends AbstractBaseController implements 
         }
     }
 
-    static public function clazz()
+    public static function clazz()
     {
         return get_called_class();
     }

@@ -1,12 +1,10 @@
 <?php
 
 namespace Modera\ServerCrudBundle\Tests\Unit\Controller;
-use Modera\ServerCrudBundle\DataMapping\DataMapperInterface;
+
 use Modera\ServerCrudBundle\DependencyInjection\ModeraServerCrudExtension;
-use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Modera\ServerCrudBundle\Controller\AbstractCrudController;
-use Doctrine\Common\Util\Debug;
 
 /**
  * @author    Alex Plaksin <alex.plaksin@modera.net>
@@ -30,11 +28,10 @@ class AbstractCrudControllerTest extends \PHPUnit_Framework_TestCase
         $controller->setContainer($container);
 
         \Phake::when($controller)->getConfig()->thenReturn(
-            array( 'entity' => 'testValue', 'hydration' => 'testValue')
+            array('entity' => 'testValue', 'hydration' => 'testValue')
         );
 
         $this->assertTrue(\Phake::makeVisible($controller)->getDataMapper());
-
     }
 
     /**
@@ -84,5 +81,45 @@ class AbstractCrudControllerTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertTrue(\Phake::makeVisible($controller)->getDataMapper());
+    }
+
+    /**
+     * @expectedException \Modera\ServerCrudBundle\Exceptions\BadConfigException
+     * @expectedExceptionMessage An error occurred while getting a configuration property "nonExisingService". No such property exists in config.
+     */
+    public function testGetConfiguredService_NoConfigOption()
+    {
+        $config = array('nonExistingService' => 'configDefinedMapper');
+
+        /** @var ContainerBuilder $container */
+        $container = \Phake::partialMock('Symfony\Component\DependencyInjection\ContainerBuilder');
+        $container->setParameter(ModeraServerCrudExtension::CONFIG_KEY, $config);
+        $container->compile();
+
+        /** @var AbstractCrudController $controller */
+        $controller = \Phake::partialMock('Modera\ServerCrudBundle\Controller\AbstractCrudController');
+        $controller->setContainer($container);
+
+        \Phake::makeVisible($controller)->getConfiguredService('nonExisingService');
+    }
+
+    /**
+     * @expectedException \Modera\ServerCrudBundle\Exceptions\BadConfigException
+     * @expectedExceptionMessage An error occurred while getting a service for configuration property "entity_validator" using DI service with ID "nonExistingServiceId" - You have requested a non-existent service "nonexistingserviceid".
+     */
+    public function testGetConfiguredService_NoContainerService()
+    {
+        $config = array('entity_validator' => 'nonExistingServiceId');
+
+        /** @var ContainerBuilder $container */
+        $container = \Phake::partialMock('Symfony\Component\DependencyInjection\ContainerBuilder');
+        $container->setParameter(ModeraServerCrudExtension::CONFIG_KEY, $config);
+        $container->compile();
+
+        /** @var AbstractCrudController $controller */
+        $controller = \Phake::partialMock('Modera\ServerCrudBundle\Controller\AbstractCrudController');
+        $controller->setContainer($container);
+
+        \Phake::makeVisible($controller)->getConfiguredService('entity_validator');
     }
 }
