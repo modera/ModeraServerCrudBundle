@@ -34,27 +34,11 @@ class BadConfigException extends \RuntimeException
     }
 
     /**
-     * @param string $serviceType
-     */
-    public function setServiceType($serviceType)
-    {
-        $this->serviceType = $serviceType;
-    }
-
-    /**
      * @return array
      */
     public function getConfig()
     {
         return $this->config;
-    }
-
-    /**
-     * @param array $config
-     */
-    public function setConfig($config)
-    {
-        $this->config = $config;
     }
 
     /**
@@ -66,14 +50,6 @@ class BadConfigException extends \RuntimeException
     }
 
     /**
-     * @param mixed $exception
-     */
-    public function setException($exception)
-    {
-        $this->exception = $exception;
-    }
-
-    /**
      * @param $serviceType
      * @param array      $config
      * @param \Exception $exception
@@ -82,12 +58,6 @@ class BadConfigException extends \RuntimeException
      */
     public static function create($serviceType, array $config, \Exception $exception)
     {
-        $generatedException = new self();
-
-        $generatedException->setServiceType($serviceType);
-        $generatedException->setConfig($config);
-        $generatedException->setException($exception);
-
         $parentMessage = $exception->getMessage();
 
         if (array_key_exists($serviceType, $config)) {
@@ -105,7 +75,11 @@ class BadConfigException extends \RuntimeException
             );
         }
 
-        $generatedException->message = $message;
+        $generatedException = new self($message, $exception->getCode(), $exception);
+
+        $generatedException->serviceType = $serviceType;
+        $generatedException->config = $config;
+        $generatedException->exception = $exception;
 
         return $generatedException;
     }
