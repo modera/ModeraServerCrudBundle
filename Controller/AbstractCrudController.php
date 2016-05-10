@@ -50,6 +50,8 @@ abstract class AbstractCrudController extends AbstractBaseController implements 
      */
     public function getPreparedConfig()
     {
+        $me = $this;
+
         $defaultConfig = array(
             'create_entity' => function (array $params, array $config, EntityFactoryInterface $defaultFactory, ContainerInterface $container) {
                 return $defaultFactory->create($params, $config);
@@ -85,8 +87,8 @@ abstract class AbstractCrudController extends AbstractBaseController implements 
                 return $defaultImpl->getValues($params, $config);
             },
             // allows to override default data mapper used by the this specific controller
-            'create_default_data_mapper' => function(ContainerInterface $container) {
-                return $this->getConfiguredService('data_mapper');
+            'create_default_data_mapper' => function(ContainerInterface $container) use ($me) {
+                return $me->getConfiguredService('data_mapper');
             },
             // optional
             'ignore_standard_validator' => false,
