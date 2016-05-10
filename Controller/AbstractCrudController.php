@@ -132,7 +132,7 @@ abstract class AbstractCrudController extends AbstractBaseController implements 
      *
      * @return object
      */
-    private function getConfiguredService($serviceType)
+    public function getConfiguredService($serviceType)
     {
         $config = $this->container->getParameter(ModeraServerCrudExtension::CONFIG_KEY);
 
