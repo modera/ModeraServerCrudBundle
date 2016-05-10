@@ -87,7 +87,7 @@ abstract class AbstractCrudController extends AbstractBaseController implements 
                 return $defaultImpl->getValues($params, $config);
             },
             // allows to override default data mapper used by the this specific controller
-            'create_default_data_mapper' => function(ContainerInterface $container) use ($me) {
+            'create_default_data_mapper' => function (ContainerInterface $container) use ($me) {
                 return $me->getConfiguredService('data_mapper');
             },
             // optional

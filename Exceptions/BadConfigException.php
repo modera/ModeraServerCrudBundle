@@ -21,11 +21,6 @@ class BadConfigException extends \RuntimeException
     protected $config;
 
     /**
-     * @var \Exception
-     */
-    protected $exception;
-
-    /**
      * @return string
      */
     public function getServiceType()
@@ -39,14 +34,6 @@ class BadConfigException extends \RuntimeException
     public function getConfig()
     {
         return $this->config;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getException()
-    {
-        return $this->exception;
     }
 
     /**
