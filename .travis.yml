@@ -2,10 +2,10 @@ language: php
 
 env:
   global:
-    - db.host=localhost
-    - db.port=3306
-    - db.user=root
-    - db.password=
+    - db_host=localhost
+    - db_port=3306
+    - db_user=root
+    - db_password=
 
 php:
   - 5.4

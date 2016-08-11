@@ -11,10 +11,10 @@ framework:
 doctrine:
     dbal:
         driver:   pdo_mysql
-        host:     %db.host%
-        port:     %db.port%
-        user:     %db.user%
-        password: %db.password%
+        host:     %db_host%
+        port:     %db_port%
+        user:     %db_user%
+        password: %db_password%
         dbname:   modera_server_crud
         charset:  UTF8
 
