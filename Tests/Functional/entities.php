@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as Orm;
 /**
  * @Orm\Entity
  */
-class entities
+class DummyUser
 {
     /**
      * @Orm\Column(type="integer")
