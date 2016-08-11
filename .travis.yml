@@ -5,7 +5,7 @@ env:
     - SYMFONY__db_host=localhost
     - SYMFONY__db_port=3306
     - SYMFONY__db_user=root
-    - SYMFONY__db_password=
+    - SYMFONY__db_password=""
 
 php:
   - 5.4
