@@ -11,11 +11,11 @@ framework:
 doctrine:
     dbal:
         driver:   pdo_mysql
-        host:     127.0.0.1
-        port:     3306
+        host:     %db.host%
+        port:     %db.port%
+        user:     %db.user%
+        password: %db.password%
         dbname:   modera_server_crud
-        user:     root
-        password:
         charset:  UTF8
 
     orm:
@@ -23,13 +23,12 @@ doctrine:
         auto_mapping: true
 
 security:
-  providers:
-    in_memory:
-        memory:
-            users:
-                ryan:  { password: ryanpass, roles: 'ROLE_USER' }
-
-  firewalls:
-    secured_area:
-        pattern:   ^/
-        anonymous: ~
+    providers:
+        in_memory:
+            memory:
+                users:
+                    ryan:  { password: ryanpass, roles: 'ROLE_USER' }
+    firewalls:
+        secured_area:
+            pattern:   ^/
+            anonymous: ~

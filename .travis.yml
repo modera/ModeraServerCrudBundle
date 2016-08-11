@@ -1,5 +1,11 @@
 language: php
 
+env:
+  - db.host=localhost
+  - db.port=3306
+  - db.user=root
+  - db.password=
+
 php:
   - 5.4
   - 5.5
