@@ -10,9 +10,9 @@ class DefaultModelManager implements ModelManagerInterface
 {
     private function underscorizeWord($word)
     {
-        $result = strtolower($word{0});
+        $result = strtolower($word[0]);
         for ($i = 1; $i < strlen($word); ++$i) {
-            $char = $word{$i};
+            $char = $word[$i];
 
             if (strtoupper($char) === $char) {
                 $result .= '_';
@@ -56,7 +56,9 @@ class DefaultModelManager implements ModelManagerInterface
             }
 
             $explodedSegment = explode('_', $segment);
-            $explodedSegment = array_map(function ($v) { return ucfirst($v); }, $explodedSegment);
+            $explodedSegment = array_map(function ($v) {
+                return ucfirst($v);
+            }, $explodedSegment);
 
             $segment = implode('', $explodedSegment);
             if (1 == $i) {

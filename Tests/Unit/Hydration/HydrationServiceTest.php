@@ -66,7 +66,6 @@ class HydrationServiceTest extends \PHPUnit_Framework_TestCase
         $this->config = array(
             'groups' => array(
                 'tags' => function () {
-
                 },
                 'comments' => function (Article $e) {
                     $result = array();
