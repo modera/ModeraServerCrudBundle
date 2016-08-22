@@ -36,7 +36,7 @@ class DefaultNewValuesFactoryTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetValues()
     {
-        $container = $this->getMock('Symfony\Component\DependencyInjection\ContainerInterface');
+        $container = $this->createMock('Symfony\Component\DependencyInjection\ContainerInterface');
 
         $nvf = new DefaultNewValuesFactory($container);
 

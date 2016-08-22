@@ -59,7 +59,7 @@ class HydrationServiceTest extends \PHPUnit_Framework_TestCase
     // override
     public function setUp()
     {
-        $this->container = $this->getMock('Symfony\Component\DependencyInjection\ContainerInterface');
+        $this->container = $this->createMock('Symfony\Component\DependencyInjection\ContainerInterface');
 
         $this->service = new HydrationService($this->container);
 

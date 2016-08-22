@@ -34,8 +34,8 @@ class EnvAwareExceptionHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->handlersProvider = $this->getMock(ContributorInterface::CLAZZ);
-        $this->kernel = $this->getMock('Symfony\Component\HttpKernel\Kernel', array(), array(), '', false);
+        $this->handlersProvider = $this->createMock(ContributorInterface::CLAZZ);
+        $this->kernel = $this->createMock('Symfony\Component\HttpKernel\Kernel', array(), array(), '', false);
 
         $this->handler = new EnvAwareExceptionHandler($this->handlersProvider, $this->kernel);
     }

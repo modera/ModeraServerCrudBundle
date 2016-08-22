@@ -22,8 +22,8 @@
         "doctrine/doctrine-bundle": "~1.2"
     },
     "require-dev": {
-        "phpunit/phpunit": "3.7.*",
-        "phake/phake": "2.*"
+        "phpunit/phpunit": "^5.5",
+        "phake/phake": "~2.0"
     },
     "autoload": {
         "psr-0": { "Modera\\ServerCrudBundle": "" }

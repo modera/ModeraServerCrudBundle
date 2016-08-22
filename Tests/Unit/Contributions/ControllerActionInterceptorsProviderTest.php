@@ -13,9 +13,9 @@ class ControllerActionInterceptorsProviderTest extends \PHPUnit_Framework_TestCa
 {
     public function testGetItems()
     {
-        $ac = $this->getMock('Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface');
+        $ac = $this->createMock('Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface');
 
-        $container = $this->getMock('Symfony\Component\DependencyInjection\ContainerInterface');
+        $container = $this->createMock('Symfony\Component\DependencyInjection\ContainerInterface');
         $container->expects($this->atLeastOnce())
                   ->method('get')
                   ->with($this->equalTo('security.authorization_checker'))

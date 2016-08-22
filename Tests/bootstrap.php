@@ -2,8 +2,22 @@
 
 use Doctrine\Common\Annotations\AnnotationRegistry;
 
-if (!is_file($loaderFile = __DIR__.'/../vendor/autoload.php')) {
-    throw new \LogicException('Could not find autoload.php in vendor/. Did you run "composer install --dev"?');
+$loaderFiles = [
+    __DIR__.'/../vendor/autoload.php',
+    __DIR__.'/../../../../vendor/autoload.php', // monolith repository
+];
+
+$enabledLoaderFile = null;
+foreach ($loaderFiles as $loaderFile) {
+    if (file_exists($loaderFile)) {
+        $enabledLoaderFile = $loaderFile;
+
+        break;
+    }
+}
+
+if (!$enabledLoaderFile) {
+    throw new \LogicException('Unable to find loader files, looked in these locations: '.implode(', ', $loaderFiles));
 }
 
 /* @var \Composer\Autoload\ClassLoader $loader */

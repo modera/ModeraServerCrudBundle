@@ -23,9 +23,9 @@ class InterceptorsManagerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->provider = $this->getMock(ContributorInterface::CLAZZ);
+        $this->provider = $this->createMock(ContributorInterface::CLAZZ);
         $this->mgr = new InterceptorsManager($this->provider);
-        $this->controller = $this->getMock(AbstractCrudController::clazz());
+        $this->controller = $this->createMock(AbstractCrudController::clazz());
     }
 
     /**
