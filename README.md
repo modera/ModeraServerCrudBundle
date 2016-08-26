@@ -1,5 +1,6 @@
 # ModeraServerCrudBundle
-[![Build Status](https://travis-ci.org/modera/ModeraServerCrudBundle.svg?branch=master)](https://travis-ci.org/modera/ModeraServerCrudBundle)
+
+[![Build Status](https://travis-ci.org/modera/foundation.svg?branch=master)](https://travis-ci.org/modera/foundation)
 [![StyleCI](https://styleci.io/repos/17936357/shield)](https://styleci.io/repos/17936357)
 
 The bundle provides a set of tools that simplifies building applications which need to operate with data coming
