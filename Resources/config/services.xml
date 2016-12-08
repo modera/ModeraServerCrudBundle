@@ -29,10 +29,24 @@
             <argument type="service" id="doctrine.orm.entity_manager" />
         </service>
 
-        <service id="modera_server_crud.persistence.default_handler"
+        <!--
+            Deprecated in favor of "modera_server_crud.persistence.doctrine_registry_handler".
+            Before 2.52.0 it used to be named "modera_server_crud.persistence.default_handler",
+            This service left here in case still someone needs it though it is highly
+            recommended to start using "modera_server_crud.persistence.doctrine_registry_handler"
+            instead.
+        -->
+        <service id="modera_server_crud.persistence.doctrine_handler"
                  class="Modera\ServerCrudBundle\Persistence\DoctrinePersistenceHandler">
 
             <argument type="service" id="doctrine.orm.entity_manager" />
+            <argument type="service" id="sli.extjsintegration.extjs_query_builder" />
+        </service>
+
+        <service id="modera_server_crud.persistence.doctrine_registry_handler"
+                 class="Modera\ServerCrudBundle\Persistence\DoctrineRegistryPersistenceHandler">
+
+            <argument type="service" id="doctrine" />
             <argument type="service" id="sli.extjsintegration.extjs_query_builder" />
         </service>
 

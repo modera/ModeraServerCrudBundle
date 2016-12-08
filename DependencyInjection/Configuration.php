@@ -27,7 +27,7 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->scalarNode('persistence_handler')
-                    ->defaultValue('modera_server_crud.persistence.default_handler')
+                    ->defaultValue('modera_server_crud.persistence.doctrine_registry_handler')
                     ->cannotBeEmpty()
                 ->end()
                 ->scalarNode('model_manager')

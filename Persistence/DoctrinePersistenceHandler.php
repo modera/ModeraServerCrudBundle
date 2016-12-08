@@ -7,6 +7,8 @@ use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use Sli\ExtJsIntegrationBundle\QueryBuilder\ExtjsQueryBuilder;
 
 /**
+ * @deprecated Use DoctrineRegistryPersistenceHandler instead
+ *
  * Implementations of PersistenceHandlerInterface which eventually will use Doctrine's EntityManager to communicate
  * with database.
  *

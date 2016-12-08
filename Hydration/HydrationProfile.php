@@ -8,14 +8,20 @@ namespace Modera\ServerCrudBundle\Hydration;
  */
 class HydrationProfile implements HydrationProfileInterface
 {
+    /**
+     * @var boolean
+     */
     private $isGroupingNeeded;
-    private $groups = array();
-    private $extensionPoint;
 
-    public static function clazz()
-    {
-        return get_called_class();
-    }
+    /**
+     * @var array
+     */
+    private $groups = array();
+
+    /**
+     * @var mixed[]
+     */
+    private $extensionPoint;
 
     /**
      * @return string[]
@@ -27,6 +33,11 @@ class HydrationProfile implements HydrationProfileInterface
 
     // fluent interface:
 
+    /**
+     * @param bool $isGroupingNeeded
+     *
+     * @return HydrationProfile
+     */
     public static function create($isGroupingNeeded = true)
     {
         $me = new self();
@@ -36,13 +47,18 @@ class HydrationProfile implements HydrationProfileInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @return boolean
      */
     public function isGroupingNeeded()
     {
         return $this->isGroupingNeeded;
     }
 
+    /**
+     * @param mixed[] $groups
+     *
+     * @return HydrationProfile
+     */
     public function useGroups(array $groups)
     {
         $this->groups = $groups;
@@ -50,6 +66,11 @@ class HydrationProfile implements HydrationProfileInterface
         return $this;
     }
 
+    /**
+     * @param string $extensionPoint
+     *
+     * @return HydrationProfile
+     */
     public function useExtensionPoint($extensionPoint)
     {
         $this->extensionPoint = $extensionPoint;
@@ -57,6 +78,14 @@ class HydrationProfile implements HydrationProfileInterface
         return $this;
     }
 
+    /**
+     * If TRUe then serialized data will be grouped under "profile-names". See Resources/doc/index.md for more
+     * details.
+     *
+     * @param boolean $isGroupingNeeded
+     *
+     * @return HydrationProfile
+     */
     public function useGrouping($isGroupingNeeded)
     {
         if (!in_array($isGroupingNeeded, array(true, false), true)) {
@@ -69,5 +98,10 @@ class HydrationProfile implements HydrationProfileInterface
         $this->isGroupingNeeded = $isGroupingNeeded;
 
         return $this;
+    }
+
+    public static function clazz()
+    {
+        return get_called_class();
     }
 }

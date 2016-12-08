@@ -3,10 +3,16 @@
 namespace Modera\ServerCrudBundle\Hydration;
 
 /**
+ * @internal
+ *
  * @author Sergei Lissovski <sergei.lissovski@modera.org>
+ * @copyright 2013 Modera Foundation
  */
 class ConfigAnalyzer
 {
+    /**
+     * @var array
+     */
     private $rawConfig;
 
     /**

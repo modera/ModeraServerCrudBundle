@@ -143,15 +143,10 @@ class AbstractCrudControllerTest extends FunctionalTestCase
     // override
     public static function doSetUpBeforeClass()
     {
-        $driver = new AnnotationDriver(
-            self::$kernel->getContainer()->get('annotation_reader'),
-            array(__DIR__)
-        );
-
-        Toolkit::addMetadataDriverForEntityManager(self::$em, $driver, __NAMESPACE__);
         Toolkit::createTableFoEntity(self::$em, DummyArticle::clazz());
     }
 
+    // override
     public static function doTearDownAfterClass()
     {
         Toolkit::dropTableForEntity(self::$em, DummyArticle::clazz());

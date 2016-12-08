@@ -2,6 +2,7 @@
 
 namespace Modera\ServerCrudBundle\Tests\Unit\Hydration;
 
+use Modera\ServerCrudBundle\Hydration\BadHydrationResultException;
 use Modera\ServerCrudBundle\Hydration\HydrationProfile;
 use Modera\ServerCrudBundle\Hydration\HydrationService;
 use Modera\ServerCrudBundle\Hydration\UnknownHydrationProfileException;
@@ -91,11 +92,16 @@ class HydrationServiceTest extends \PHPUnit_Framework_TestCase
                         'body' => substr($e->body, 0, 10),
                     );
                 },
+                'show_stopper' => function() {
+                    return new \stdClass();
+                },
             ),
             'profiles' => array(
                 'list' => HydrationProfile::create(false)->useGroups(array('list')),
                 'form' => HydrationProfile::create()->useGroups(array('form', 'comments', 'author')),
                 'author',
+                'preview' => HydrationProfile::create(false)->useGroups(array('list', 'author')),
+                'kaput' => HydrationProfile::create(false)->useGroups(array('list', 'show_stopper')),
             ),
         );
 
@@ -190,7 +196,30 @@ class HydrationServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testHydrateWithNoResultGroupingAllowedButGroupSpecified()
     {
-        $this->markTestIncomplete();
+        $result = $this->service->hydrate($this->article, $this->config, 'preview', 'list');
+
+        $expectedResult = array(
+            'title' => 'Foo title',
+            'body' => 'Bar body',
+        );
+
+        $this->assertEquals($expectedResult, $result);
+    }
+
+    public function testHydrateWithBadResult()
+    {
+        $thrownException = null;
+
+        try {
+            $this->service->hydrate($this->article, $this->config, 'kaput');
+        } catch (BadHydrationResultException $e) {
+            $thrownException = $e;
+        }
+
+        $this->assertNotNull($thrownException);
+        $this->assertEquals('show_stopper', $thrownException->getGroupName());
+        $this->assertInstanceOf(HydrationProfile::clazz(), $thrownException->getProfile());
+        $this->assertInstanceOf('stdClass', $thrownException->getResult());
     }
 
     public function testWhenUnknownHydrationProfileIsSpecified()

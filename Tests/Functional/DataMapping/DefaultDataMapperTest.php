@@ -47,16 +47,6 @@ class DummyUser
  */
 class DefaultDataMapperTest extends FunctionalTestCase
 {
-    public static function doSetUpBeforeClass()
-    {
-        $driver = new AnnotationDriver(
-            self::$kernel->getContainer()->get('annotation_reader'),
-            array(__DIR__)
-        );
-
-        Toolkit::addMetadataDriverForEntityManager(self::$em, $driver, __NAMESPACE__);
-    }
-
     public function testMapData()
     {
         /* @var DefaultDataMapper $mapper */

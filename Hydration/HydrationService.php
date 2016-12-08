@@ -56,17 +56,23 @@ class HydrationService
         return 'Invalid hydrator definition';
     }
 
-    private function mergeHydrationResult(array $currentResult, array $hydratorResult, HydrationProfile $profile, $groupName)
+    private function mergeHydrationResult(array $currentResult, $hydratorResult, HydrationProfile $profile, $groupName)
     {
         if ($profile->isGroupingNeeded()) {
             $currentResult[$groupName] = $hydratorResult;
         } else {
+            // hydrators might also return some data structure that we can try to combine together
             if (is_callable($hydratorResult)) {
                 $currentResult = $hydratorResult($currentResult);
             } elseif (is_array($hydratorResult)) {
                 $currentResult = array_merge($currentResult, $hydratorResult);
             } else {
-                throw new \RuntimeException();
+                throw BadHydrationResultException::create(
+                    'Hydration result must either be an array or a callable.',
+                    $hydratorResult,
+                    $profile,
+                    $groupName
+                );
             }
         }
 
