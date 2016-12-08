@@ -2,7 +2,7 @@
 
 namespace Modera\ServerCrudBundle\Tests\Functional\Persistence;
 
-require_once __DIR__.'/../entities.php';
+require_once __DIR__.'/../../Fixtures/Entity/entities.php';
 
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
 use Modera\FoundationBundle\Testing\FunctionalTestCase;
@@ -12,6 +12,8 @@ use Sli\AuxBundle\Util\Toolkit;
 use Modera\ServerCrudBundle\Tests\Functional\DummyUser;
 
 /**
+ * @deprecated In favor of DoctrineRegistryPersistenceHandlerTest
+ *
  * @author    Sergei Lissovski <sergei.lissovski@modera.org>
  * @copyright 2013 Modera Foundation
  */
@@ -19,12 +21,6 @@ class DoctrinePersistenceHandlerTest extends FunctionalTestCase
 {
     public static function doSetUpBeforeClass()
     {
-        $driver = new AnnotationDriver(
-            self::$kernel->getContainer()->get('annotation_reader'),
-            array(__DIR__)
-        );
-
-        Toolkit::addMetadataDriverForEntityManager(self::$em, $driver, 'Modera\ServerCrudBundle\Tests\Functional');
         Toolkit::createTableFoEntity(self::$em, DummyUser::clazz());
     }
 
@@ -36,9 +32,9 @@ class DoctrinePersistenceHandlerTest extends FunctionalTestCase
     /**
      * @return DoctrinePersistenceHandler
      */
-    private function getHandler()
+    protected function getHandler()
     {
-        return self::$container->get('modera_server_crud.persistence.default_handler');
+        return self::$container->get('modera_server_crud.persistence.doctrine_handler');
     }
 
     public function testServiceExistence()

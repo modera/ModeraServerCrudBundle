@@ -22,6 +22,12 @@ doctrine:
     orm:
         auto_generate_proxy_classes: true
         auto_mapping: true
+        mappings:
+            fixtures:
+                type: annotation
+                dir: "%kernel.root_dir%/../../Entity"
+                is_bundle: false
+                prefix: Modera\ServerCrudBundle\Tests\Functional
 
 security:
     providers:

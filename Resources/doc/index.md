@@ -107,10 +107,10 @@ For production environment returned information will be more scarce:
 
 Before we go into discussions on what tools the bundle provides that allow you to hydrate you data it is worth taking
 a moment and explaining what hydration is. Simply speaking, hydration it is a process of taking your in-memory
-object and converting to something that can be easily send through network - yes, you can think of it as serialization,
+object and converting it to something that can be easily send through network - yes, you can think of it as serialization,
 but there's one gotcha though. Usually, when you serialize an object and then de-serialize in on the other end of the
 wire then you expect to get exact or similar state the object had when it was serialized but when it comes to hydration
-we naturally acknowledge that some data may be intentionally skipped, this means that a sentence "data templating" would
+we naturally acknowledge that some data may be intentionally skipped, this means that a term "data templating" would
 more accurately reflect the essence of what hydration really is - it is a process of templating data structures. For
 example, a User object configured this way:
 
@@ -154,7 +154,7 @@ care of. HydrationService is a very flexible component providing many configurat
 to satisfy even the most demanding requirements.
 
 When defining hydration configuration scheme you will be operating two configuration properties - "profiles" and "groups".
-Profiles can be though of as template names, which will define how you your in-memory object will be serialized down
+Profiles can be though of as template names, which will define how your in-memory object will be serialized down
 to a data-structure that can be sent back to client-side. Groups can be used inside profile to split data into semantic
 chunks of data and later can be grouped to form profiles without duplicating code. Looking at the examples above, this
 is how you could define hydration groups:
@@ -297,7 +297,7 @@ array, a class which implements special \__invoke method. This is how reusable c
 
     class CreditCardsHydrator
     {
-        public function \__invoke(User $u, ContainerInterface $container)
+        public function __invoke(User $u, ContainerInterface $container)
         {
             $result = array();
 
