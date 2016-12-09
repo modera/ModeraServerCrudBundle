@@ -2,10 +2,8 @@
 
 namespace Modera\ServerCrudBundle\Tests\Functional\DataMapping;
 
-use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
 use Modera\FoundationBundle\Testing\FunctionalTestCase;
 use Modera\ServerCrudBundle\DataMapping\DefaultDataMapper;
-use Sli\AuxBundle\Util\Toolkit;
 use Doctrine\ORM\Mapping as Orm;
 
 /**
