@@ -40,7 +40,7 @@ class DoctrineRegistryPersistenceHandlerTest extends \PHPUnit_Framework_TestCase
 
         $registry = $this->createDummyRegistry(array(
             get_class($user1) => $em1,
-            get_class($address1) => $em2
+            get_class($address1) => $em2,
         ));
 
         $handler = new DoctrineRegistryPersistenceHandler($registry, \Phake::mock(ExtjsQueryBuilder::class));
@@ -78,7 +78,7 @@ class DoctrineRegistryPersistenceHandlerTest extends \PHPUnit_Framework_TestCase
 
         $registry = $this->createDummyRegistry(array(
             get_class($user1) => $em1,
-            get_class($address1) => $em2
+            get_class($address1) => $em2,
         ));
 
         $handler = new DoctrineRegistryPersistenceHandler($registry, \Phake::mock(ExtjsQueryBuilder::class));

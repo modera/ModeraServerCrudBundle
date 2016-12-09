@@ -9,7 +9,7 @@ namespace Modera\ServerCrudBundle\Hydration;
 class HydrationProfile implements HydrationProfileInterface
 {
     /**
-     * @var boolean
+     * @var bool
      */
     private $isGroupingNeeded;
 
@@ -47,7 +47,7 @@ class HydrationProfile implements HydrationProfileInterface
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isGroupingNeeded()
     {
@@ -82,7 +82,7 @@ class HydrationProfile implements HydrationProfileInterface
      * If TRUe then serialized data will be grouped under "profile-names". See Resources/doc/index.md for more
      * details.
      *
-     * @param boolean $isGroupingNeeded
+     * @param bool $isGroupingNeeded
      *
      * @return HydrationProfile
      */

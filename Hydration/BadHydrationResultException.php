@@ -27,8 +27,8 @@ class BadHydrationResultException extends \RuntimeException
 
     /**
      * @param string $message
-     * @param mixed $result
-     * @param mixed $profile
+     * @param mixed  $result
+     * @param mixed  $profile
      * @param string $groupName
      *
      * @return BadHydrationResultException

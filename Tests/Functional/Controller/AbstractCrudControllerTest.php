@@ -9,7 +9,6 @@ use Doctrine\ORM\Mapping as Orm;
 use Modera\ServerCrudBundle\Tests\Fixtures\Bundle\Contributions\ControllerActionInterceptorsProvider;
 use Symfony\Component\Validator\Constraints as Assert;
 use Sli\AuxBundle\Util\Toolkit;
-use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
 
 /**
  * @Orm\Entity

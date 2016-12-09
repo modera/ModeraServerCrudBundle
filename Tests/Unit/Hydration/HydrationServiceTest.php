@@ -92,7 +92,7 @@ class HydrationServiceTest extends \PHPUnit_Framework_TestCase
                         'body' => substr($e->body, 0, 10),
                     );
                 },
-                'show_stopper' => function() {
+                'show_stopper' => function () {
                     return new \stdClass();
                 },
             ),

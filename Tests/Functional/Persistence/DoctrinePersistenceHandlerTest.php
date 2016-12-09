@@ -4,7 +4,6 @@ namespace Modera\ServerCrudBundle\Tests\Functional\Persistence;
 
 require_once __DIR__.'/../../Fixtures/Entity/entities.php';
 
-use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
 use Modera\FoundationBundle\Testing\FunctionalTestCase;
 use Modera\ServerCrudBundle\Persistence\DoctrinePersistenceHandler;
 use Modera\ServerCrudBundle\Persistence\OperationResult;
