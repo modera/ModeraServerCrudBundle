@@ -39,9 +39,19 @@
         <service id="modera_server_crud.persistence.doctrine_handler"
                  class="Modera\ServerCrudBundle\Persistence\DoctrinePersistenceHandler">
 
+            <deprecated>Service "%service_id%" is deprecated since 2.52.0, use modera_server_crud.persistence.doctrine_registry_handler instead</deprecated>
+
             <argument type="service" id="doctrine.orm.entity_manager" />
             <argument type="service" id="sli.extjsintegration.extjs_query_builder" />
         </service>
+
+        <!--
+            This service still remains to be here for BC reasons.
+
+            TODO this alias must be configured dynamically using Semantic configuration ("persistence_handler" property)
+         -->
+        <service id="modera_server_crud.persistence.default_handler"
+                 alias="modera_server_crud.persistence.doctrine_registry_handler" />
 
         <service id="modera_server_crud.persistence.doctrine_registry_handler"
                  class="Modera\ServerCrudBundle\Persistence\DoctrineRegistryPersistenceHandler">
