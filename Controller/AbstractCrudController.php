@@ -519,22 +519,15 @@ abstract class AbstractCrudController extends AbstractBaseController implements 
 
             $this->interceptAction('batchUpdate', $params);
 
-            if (isset($params['queries']) && is_array($params['queries'])
-                && isset($params['record']) && is_array($params['record'])) {
-                if (!isset($params['record'])) {
-                    $e = new BadRequestException("'/record' hasn't been provided");
-                    $e->setParams($params);
-                    $e->setPath('/record');
-
-                    throw $e;
-                }
-
-                $entities = array();
+            $paramQueriesDefined = isset($params['queries']) && is_array($params['queries']);
+            $paramRecordDefined = isset($params['record']) && is_array($params['record']);
+            if ($paramQueriesDefined && $paramRecordDefined) {
+                $entities = [];
                 foreach ($params['queries'] as $query) {
                     $entities = array_merge($entities, $this->getPersistenceHandler()->query($config['entity'], $query));
                 }
 
-                $errors = array();
+                $errors = [];
                 $operationResult = null;
                 foreach ($entities as $entity) {
                     $dataMapper($params['record'], $entity, $this->getDataMapper(), $this->container);
@@ -571,11 +564,11 @@ abstract class AbstractCrudController extends AbstractBaseController implements 
                     );
                 }
             } elseif (isset($params['records']) && is_array($params['records'])) {
-                $entities = array();
-                $errors = array();
+                $entities = [];
+                $errors = [];
                 foreach ($params['records'] as $recordParams) {
-                    $missingPkFields = array();
-                    $query = array();
+                    $missingPkFields = [];
+                    $query = [];
                     foreach ($this->getPersistenceHandler()->resolveEntityPrimaryKeyFields($config['entity']) as $fieldName) {
                         if (isset($recordParams[$fieldName])) {
                             $query[] = array(
@@ -598,6 +591,8 @@ abstract class AbstractCrudController extends AbstractBaseController implements 
 
                         if ($validator) {
                             /* @var ValidationResult $validationResult */
+                            // FIXME: instead of $params we need to pass $recordParams here! Cannot fix it right now
+                            // because it will break BC! Needs to be done in 3.0
                             $validationResult = $validator($params, $entity, $this->getEntityValidator(), $config, $this->container);
                             if ($validationResult->hasErrors()) {
                                 $pkFields = $this->getPersistenceHandler()->resolveEntityPrimaryKeyFields($config['entity']);
