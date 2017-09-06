@@ -100,5 +100,9 @@
 
             <tag name="modera_server_crud.intercepting.cai_provider" />
         </service>
+
+        <service id="modera_server_crud.sanitizing.null_sanitizer"
+                 class="Modera\ServerCrudBundle\Sanitizing\NullSanitizer"
+        />
     </services>
 </container>

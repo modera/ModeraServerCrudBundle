@@ -58,6 +58,9 @@ class Configuration implements ConfigurationInterface
                     ->defaultValue('modera_server_crud.new_values_factory.default_new_values_factory')
                     ->cannotBeEmpty()
                 ->end()
+                ->scalarNode('sanitizer') // since 2.56.0
+                    ->defaultValue('modera_server_crud.sanitizing.null_sanitizer')
+                ->end()
             ->end()
         ;
 

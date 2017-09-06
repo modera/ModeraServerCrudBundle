@@ -5,6 +5,7 @@ namespace Modera\ServerCrudBundle\Controller;
 use Modera\ServerCrudBundle\DataMapping\DataMapperInterface;
 use Modera\ServerCrudBundle\DependencyInjection\ModeraServerCrudExtension;
 use Modera\ServerCrudBundle\EntityFactory\EntityFactoryInterface;
+use Modera\ServerCrudBundle\Sanitizing\SanitizerInterface;
 use Modera\ServerCrudBundle\ExceptionHandling\ExceptionHandlerInterface;
 use Modera\ServerCrudBundle\Exceptions\BadConfigException;
 use Modera\ServerCrudBundle\Exceptions\BadRequestException;
@@ -94,6 +95,9 @@ abstract class AbstractCrudController extends AbstractBaseController implements 
             'ignore_standard_validator' => false,
             // optional
             'entity_validation_method' => 'validate',
+            'sanitizer' => function(array $hydratedResult, $profile, SanitizerInterface $defaultSanitizer) {
+                return $defaultSanitizer->sanitize($hydratedResult, $profile);
+            },
         );
 
         $config = array_merge($defaultConfig, $this->getConfig());
@@ -143,6 +147,14 @@ abstract class AbstractCrudController extends AbstractBaseController implements 
         } catch (\Exception $e) {
             throw BadConfigException::create($serviceType, $config, $e);
         }
+    }
+
+    /**
+     * @return SanitizerInterface
+     */
+    private function getSanitizer()
+    {
+        return $this->getConfiguredService('sanitizer');
     }
 
     /**
@@ -214,7 +226,6 @@ abstract class AbstractCrudController extends AbstractBaseController implements 
     /**
      * @param object $entity
      * @param array  $params
-     * @param string $defaultProfile
      *
      * @return array
      */
@@ -234,7 +245,33 @@ abstract class AbstractCrudController extends AbstractBaseController implements 
         $config = $this->getPreparedConfig();
         $hydrationConfig = $config['hydration'];
 
-        return $this->getHydrator()->hydrate($entity, $hydrationConfig, $profile, $groups);
+        $hydratedResult = $this->getHydrator()->hydrate($entity, $hydrationConfig, $profile, $groups);
+
+        return $this->sanitizeResult($hydratedResult, $profile);
+    }
+
+    /**
+     * @param array  $result
+     * @param string $profile
+     *
+     * @return array
+     */
+    private function sanitizeResult(array $result, $profile)
+    {
+        $sanitizer = $this->getPreparedConfig()['sanitizer'];
+
+        if (is_callable($sanitizer)) {
+            return call_user_func_array($sanitizer, [$result, $profile, $this->getSanitizer()]);
+        } else {
+            if ($sanitizer === $sanitizer) {
+                return $result;
+            }
+
+            $e = new BadConfigException(
+                '"sanitizer" configuration property can only be either a callback or a FALSE value.'
+            );
+            throw $e;
+        }
     }
 
     final protected function createExceptionResponse(\Exception $e, $operation)
