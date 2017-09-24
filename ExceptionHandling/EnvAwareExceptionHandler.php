@@ -6,6 +6,10 @@ use Sli\ExpanderBundle\Ext\ContributorInterface;
 use Symfony\Component\HttpKernel\Kernel;
 
 /**
+ * @deprecated Since 2.56.0, to be removed/or heavily refactored in 3.0 (because
+ * the format response is not compatible with ExtDirect specification -
+ * https://docs.sencha.com/extjs/6.0.2/guides/backend_connectors/direct/specification.html).
+ *
  * @author    Sergei Lissovski <sergei.lissovski@modera.org>
  * @copyright 2013 Modera Foundation
  */
