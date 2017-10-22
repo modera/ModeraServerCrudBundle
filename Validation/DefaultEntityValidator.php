@@ -4,7 +4,8 @@ namespace Modera\ServerCrudBundle\Validation;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Validator\ConstraintViolationInterface;
-use Symfony\Component\Validator\ValidatorInterface;
+//use Symfony\Component\Validator\ValidatorInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @author    Sergei Lissovski <sergei.lissovski@modera.org>

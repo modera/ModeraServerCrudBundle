@@ -112,7 +112,7 @@ class AbstractCrudControllerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Modera\ServerCrudBundle\Exceptions\BadConfigException
-     * @expectedExceptionMessage An error occurred while getting a service for configuration property "entity_validator" using DI service with ID "nonExistingServiceId" - You have requested a non-existent service "nonexistingserviceid".
+     * @expectedExceptionMessage An error occurred while getting a service for configuration property "entity_validator" using DI service with ID "nonExistingServiceId" - You have requested a non-existent service "nonExistingServiceId"
      */
     public function testGetConfiguredService_NoContainerService()
     {
