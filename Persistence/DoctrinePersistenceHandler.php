@@ -4,6 +4,7 @@ namespace Modera\ServerCrudBundle\Persistence;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Sli\ExtJsIntegrationBundle\QueryBuilder\ExtjsQueryBuilder;
 
 /**
@@ -19,15 +20,30 @@ class DoctrinePersistenceHandler implements PersistenceHandlerInterface
 {
     private $em;
     private $queryBuilder;
+    private $usePaginator;
 
     /**
      * @param EntityManager     $em
      * @param ExtjsQueryBuilder $queryBuilder
+     * @param bool $usePaginator
      */
-    public function __construct(EntityManager $em, ExtjsQueryBuilder $queryBuilder)
+    public function __construct(EntityManager $em, ExtjsQueryBuilder $queryBuilder, $usePaginator = true)
     {
         $this->em = $em;
         $this->queryBuilder = $queryBuilder;
+        $this->usePaginator = $usePaginator;
+    }
+
+    /**
+     * @param string $entityClass
+     * @param array  $query
+     * @return Paginator
+     */
+    private function createPaginator($entityClass, array $query)
+    {
+        $qb = $this->queryBuilder->buildQueryBuilder($entityClass, $query);
+
+        return new Paginator($qb->getQuery());
     }
 
     private function resolveEntityId($entity)
@@ -116,6 +132,10 @@ class DoctrinePersistenceHandler implements PersistenceHandlerInterface
      */
     public function query($entityClass, array $query)
     {
+        if ($this->usePaginator) {
+            return $this->createPaginator($entityClass, $query)->getIterator()->getArrayCopy();
+        }
+
         return $this->queryBuilder->buildQuery($entityClass, $query)->getResult();
     }
 
@@ -124,6 +144,10 @@ class DoctrinePersistenceHandler implements PersistenceHandlerInterface
      */
     public function getCount($entityClass, array $query)
     {
+        if ($this->usePaginator) {
+            return $this->createPaginator($entityClass, $query)->count();
+        }
+
         $qb = $this->queryBuilder->buildQueryBuilder($entityClass, $query);
 
         return $this->queryBuilder->buildCountQueryBuilder($qb)->getQuery()->getSingleScalarResult();
