@@ -9,6 +9,7 @@ use Modera\ServerCrudBundle\Persistence\DoctrinePersistenceHandler;
 use Modera\ServerCrudBundle\Persistence\OperationResult;
 use Sli\AuxBundle\Util\Toolkit;
 use Modera\ServerCrudBundle\Tests\Functional\DummyUser;
+use Modera\ServerCrudBundle\Tests\Functional\DummyNote;
 
 /**
  * @deprecated In favor of DoctrineRegistryPersistenceHandlerTest
@@ -21,10 +22,12 @@ class DoctrinePersistenceHandlerTest extends FunctionalTestCase
     public static function doSetUpBeforeClass()
     {
         Toolkit::createTableFoEntity(self::$em, DummyUser::clazz());
+        Toolkit::createTableFoEntity(self::$em, DummyNote::clazz());
     }
 
     public static function doTearDownAfterClass()
     {
+        Toolkit::dropTableForEntity(self::$em, DummyNote::clazz());
         Toolkit::dropTableForEntity(self::$em, DummyUser::clazz());
     }
 
@@ -110,16 +113,61 @@ class DoctrinePersistenceHandlerTest extends FunctionalTestCase
         return $users;
     }
 
+
+
+    /**
+     * @return DummyUser[]
+     */
+    private function loadSomeNotes(DummyUser $user)
+    {
+        $notes = array();
+
+        for ($i = 0; $i < 3; ++$i) {
+            $note = new DummyNote();
+            $note->text = 'Note_'.$i;
+            $user->addNote($note);
+
+            self::$em->persist($note);
+
+            $notes[] = $note;
+        }
+        self::$em->flush();
+
+        return $notes;
+    }
+
     public function testQuery()
     {
-        $this->loadSomeData();
-
-        /* @var DummyUser[] $result */
-        $result = $this->getHandler()->query(DummyUser::clazz(), array(
-            'limit' => 5,
+        $query = array(
             'page' => 2,
             'start' => 0,
-        ));
+            'limit' => 5,
+        );
+
+        $users = $this->loadSomeData();
+
+        /* @var DummyUser[] $result */
+        $result = $this->getHandler()->query(DummyUser::clazz(), $query);
+
+        $this->assertTrue(is_array($result));
+        $this->assertEquals(5, count($result));
+        $this->assertEquals(8, $result[0]->id);
+
+        foreach ($users as $user) {
+            $this->loadSomeNotes($user);
+        }
+
+        $query['filter'] = array(
+            array(
+                array(
+                    'property' => 'notes.text',
+                    'value' => 'like:%Note%',
+                ),
+            )
+        );
+
+        /* @var DummyUser[] $result */
+        $result = $this->getHandler()->query(DummyUser::clazz(), $query);
 
         $this->assertTrue(is_array($result));
         $this->assertEquals(5, count($result));
@@ -129,14 +177,29 @@ class DoctrinePersistenceHandlerTest extends FunctionalTestCase
     public function testGetCount()
     {
         $query = array(
-            'limit' => 5,
             'page' => 2,
             'start' => 0,
+            'limit' => 5,
         );
 
         $this->assertEquals(0, $this->getHandler()->getCount(DummyUser::clazz(), $query));
 
-        $this->loadSomeData();
+        $users = $this->loadSomeData();
+
+        $this->assertEquals(10, $this->getHandler()->getCount(DummyUser::clazz(), $query));
+
+        foreach ($users as $user) {
+            $this->loadSomeNotes($user);
+        }
+
+        $query['filter'] = array(
+            array(
+                array(
+                    'property' => 'notes.text',
+                    'value' => 'like:%Note%',
+                ),
+            )
+        );
 
         $this->assertEquals(10, $this->getHandler()->getCount(DummyUser::clazz(), $query));
     }
