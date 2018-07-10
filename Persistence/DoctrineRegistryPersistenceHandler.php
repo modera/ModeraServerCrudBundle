@@ -4,8 +4,9 @@ namespace Modera\ServerCrudBundle\Persistence;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
-use Sli\ExtJsIntegrationBundle\QueryBuilder\ExtjsQueryBuilder;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Bridge\Doctrine\RegistryInterface;
+use Sli\ExtJsIntegrationBundle\QueryBuilder\ExtjsQueryBuilder;
 
 /**
  * This implementation relies of RegistryInterface so it can support many EntityManagers for entities (previous
@@ -28,13 +29,32 @@ class DoctrineRegistryPersistenceHandler implements PersistenceHandlerInterface
     private $queryBuilder;
 
     /**
+     * @var bool
+     */
+    private $usePaginator;
+
+    /**
      * @param RegistryInterface $doctrineRegistry
      * @param ExtjsQueryBuilder $queryBuilder
+     * @param bool $usePaginator
      */
-    public function __construct(RegistryInterface $doctrineRegistry, ExtjsQueryBuilder $queryBuilder)
+    public function __construct(RegistryInterface $doctrineRegistry, ExtjsQueryBuilder $queryBuilder, $usePaginator = true)
     {
         $this->doctrineRegistry = $doctrineRegistry;
         $this->queryBuilder = $queryBuilder;
+        $this->usePaginator = $usePaginator;
+    }
+
+    /**
+     * @param string $entityClass
+     * @param array  $query
+     * @return Paginator
+     */
+    private function createPaginator($entityClass, array $query)
+    {
+        $qb = $this->queryBuilder->buildQueryBuilder($entityClass, $query);
+
+        return new Paginator($qb->getQuery());
     }
 
     /**
@@ -181,6 +201,10 @@ class DoctrineRegistryPersistenceHandler implements PersistenceHandlerInterface
      */
     public function query($entityClass, array $query)
     {
+        if ($this->usePaginator) {
+            return $this->createPaginator($entityClass, $query)->getIterator()->getArrayCopy();
+        }
+
         return $this->queryBuilder->buildQuery($entityClass, $query)->getResult();
     }
 
@@ -189,6 +213,10 @@ class DoctrineRegistryPersistenceHandler implements PersistenceHandlerInterface
      */
     public function getCount($entityClass, array $query)
     {
+        if ($this->usePaginator) {
+            return $this->createPaginator($entityClass, $query)->count();
+        }
+
         $qb = $this->queryBuilder->buildQueryBuilder($entityClass, $query);
 
         return $this->queryBuilder->buildCountQueryBuilder($qb)->getQuery()->getSingleScalarResult();
