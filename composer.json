@@ -11,11 +11,11 @@
     ],
     "require": {
         "php": ">=5.6",
-        "doctrine/orm": "~2.2,>=2.2.3",
-        "doctrine/doctrine-bundle": "~1.2",
-        "symfony/framework-bundle": "~2.6|^3.0",
-        "symfony/property-access": "~2.0|^3.0",
-        "modera/foundation-bundle": "~1.0|~2.0|~3.0",
+        "doctrine/orm": "^2.4.8",
+        "doctrine/doctrine-bundle": "~1.4",
+        "symfony/property-access": "~2.8|^3.0",
+        "symfony/framework-bundle": "~2.8|^3.0",
+        "modera/foundation-bundle": "~2.0|~3.0",
         "sergeil/extjsintegration-bundle": "^2.0",
         "sergeil/expander-bundle": "~1.0",
         "sergeil/aux-bundle": "~1.0"
