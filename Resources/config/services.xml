@@ -6,7 +6,8 @@
 
     <services>
         <service id="modera_server_crud.validation.default_entity_validator"
-                 class="Modera\ServerCrudBundle\Validation\DefaultEntityValidator">
+                 class="Modera\ServerCrudBundle\Validation\DefaultEntityValidator"
+                 public="true">
 
             <argument type="service" id="validator" />
             <argument type="service" id="service_container" />
@@ -14,10 +15,12 @@
 
         <service id="modera_server_crud.entity_factory.default_entity_factory"
                  class="Modera\ServerCrudBundle\EntityFactory\DefaultEntityFactory"
+                 public="true"
         />
 
         <service id="modera_server_crud.data_mapping.default_data_mapper"
-                 class="Modera\ServerCrudBundle\DataMapping\DefaultDataMapper">
+                 class="Modera\ServerCrudBundle\DataMapping\DefaultDataMapper"
+                 public="true">
 
             <argument type="service" id="sli.extjsintegration.entity_data_mapper" />
             <argument type="service" id="doctrine.orm.entity_manager" />
@@ -45,10 +48,13 @@
             TODO this alias must be configured dynamically using Semantic configuration ("persistence_handler" property)
          -->
         <service id="modera_server_crud.persistence.default_handler"
-                 alias="modera_server_crud.persistence.doctrine_registry_handler" />
+                 alias="modera_server_crud.persistence.doctrine_registry_handler"
+                 public="true"
+        />
 
         <service id="modera_server_crud.persistence.doctrine_registry_handler"
-                 class="Modera\ServerCrudBundle\Persistence\DoctrineRegistryPersistenceHandler">
+                 class="Modera\ServerCrudBundle\Persistence\DoctrineRegistryPersistenceHandler"
+                 public="true">
 
             <argument type="service" id="doctrine" />
             <argument type="service" id="sli.extjsintegration.extjs_query_builder" />
@@ -56,16 +62,19 @@
 
         <service id="modera_server_crud.persistence.model_manager"
                  class="Modera\ServerCrudBundle\Persistence\DefaultModelManager"
+                 public="true"
         />
 
         <service id="modera_server_crud.hydration.hydration_service"
-                 class="Modera\ServerCrudBundle\Hydration\HydrationService">
+                 class="Modera\ServerCrudBundle\Hydration\HydrationService"
+                 public="true">
 
             <argument type="service" id="service_container" />
         </service>
 
         <service id="modera_server_crud.exception_handling.env_aware_handler"
-                 class="Modera\ServerCrudBundle\ExceptionHandling\EnvAwareExceptionHandler">
+                 class="Modera\ServerCrudBundle\ExceptionHandling\EnvAwareExceptionHandler"
+                 public="true">
 
             <argument type="service" id="modera_server_crud.exception_handling.handlers_provider" />
             <argument type="service" id="kernel" />
@@ -73,16 +82,19 @@
 
         <service id="modera_server_crud.exception_handling.bypass_handler"
                  class="Modera\ServerCrudBundle\ExceptionHandling\BypassExceptionHandler"
+                 public="true"
         />
 
         <service id="modera_server_crud.new_values_factory.default_new_values_factory"
-                 class="Modera\ServerCrudBundle\NewValuesFactory\DefaultNewValuesFactory">
+                 class="Modera\ServerCrudBundle\NewValuesFactory\DefaultNewValuesFactory"
+                 public="true">
 
             <argument type="service" id="service_container" />
         </service>
 
         <service id="modera_server_crud.intercepting.interceptors_manager"
-                 class="Modera\ServerCrudBundle\Intercepting\InterceptorsManager">
+                 class="Modera\ServerCrudBundle\Intercepting\InterceptorsManager"
+                 public="true">
 
             <argument type="service" id="modera_server_crud.intercepting.cai_provider" />
         </service>
