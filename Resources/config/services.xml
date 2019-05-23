@@ -34,7 +34,8 @@
             instead.
         -->
         <service id="modera_server_crud.persistence.doctrine_handler"
-                 class="Modera\ServerCrudBundle\Persistence\DoctrinePersistenceHandler">
+                 class="Modera\ServerCrudBundle\Persistence\DoctrinePersistenceHandler"
+                 public="true">
 
             <deprecated>Service "%service_id%" is deprecated since 2.52.0, use modera_server_crud.persistence.doctrine_registry_handler instead</deprecated>
 
