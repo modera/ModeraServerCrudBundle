@@ -68,13 +68,18 @@ class DoctrineRegistryPersistenceHandler implements PersistenceHandlerInterface
 
         $entityClass = get_class($entity);
 
-        if (!in_array('getId', get_class_methods($entityClass))) {
+        /* @var ClassMetadataInfo $meta */
+        $meta = $this->getEntityManagerForClass($entityClass)->getClassMetadata($entityClass);
+        $identifier = $meta->getSingleIdentifierFieldName();
+        $method = 'get' . ucfirst($identifier);
+
+        if (!in_array($method, get_class_methods($entityClass))) {
             throw new \RuntimeException(sprintf(
-                'Class %s must have method "getId()" (it is used to resolve PK).', $entityClass
+                'Class %s must have method "%s()" (it is used to resolve PK).', $entityClass, $method
             ));
         }
 
-        return $entity->getId();
+        return $entity->{$method}();
     }
 
     /**
