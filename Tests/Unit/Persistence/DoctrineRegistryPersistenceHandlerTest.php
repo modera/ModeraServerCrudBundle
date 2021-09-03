@@ -3,6 +3,7 @@
 namespace Modera\ServerCrudBundle\Tests\Unit\Persistence;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Modera\ServerCrudBundle\Persistence\DoctrineRegistryPersistenceHandler;
 use Modera\ServerCrudBundle\Tests\Functional\DummyUser;
 use Sli\ExtJsIntegrationBundle\QueryBuilder\ExtjsQueryBuilder;
@@ -109,10 +110,21 @@ class DoctrineRegistryPersistenceHandlerTest extends \PHPUnit_Framework_TestCase
     {
         $r = \Phake::mock(RegistryInterface::class);
 
+        $meta = \Phake::mock(ClassMetadata::class);
+        \Phake::when($meta)
+            ->getSingleIdentifierFieldName()
+            ->thenReturn('id')
+        ;
+
         foreach ($classToEntityManagersMapping as $entityClass => $em) {
             \Phake::when($r)
                 ->getManagerForClass($entityClass)
                 ->thenReturn($em)
+            ;
+
+            \Phake::when($em)
+                ->getClassMetadata($entityClass)
+                ->thenReturn($meta)
             ;
         }
 
