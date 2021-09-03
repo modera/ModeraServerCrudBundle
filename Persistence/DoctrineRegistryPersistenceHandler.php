@@ -5,11 +5,11 @@ namespace Modera\ServerCrudBundle\Persistence;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use Doctrine\ORM\Tools\Pagination\Paginator;
-use Symfony\Bridge\Doctrine\RegistryInterface;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Sli\ExtJsIntegrationBundle\QueryBuilder\ExtjsQueryBuilder;
 
 /**
- * This implementation relies of RegistryInterface so it can support many EntityManagers for entities (previous
+ * This implementation relies of ManagerRegistry so it can support many EntityManagers for entities (previous
  * implementation - DoctrinePersistenceHandler used a global EntityManager instance, so it was not really possible
  * without hacks to have several entity managers properly handled by the bundle).
  *
@@ -19,7 +19,7 @@ use Sli\ExtJsIntegrationBundle\QueryBuilder\ExtjsQueryBuilder;
 class DoctrineRegistryPersistenceHandler implements PersistenceHandlerInterface
 {
     /**
-     * @var RegistryInterface
+     * @var ManagerRegistry
      */
     private $doctrineRegistry;
 
@@ -34,11 +34,11 @@ class DoctrineRegistryPersistenceHandler implements PersistenceHandlerInterface
     private $usePaginator;
 
     /**
-     * @param RegistryInterface $doctrineRegistry
+     * @param ManagerRegistry $doctrineRegistry
      * @param ExtjsQueryBuilder $queryBuilder
      * @param bool $usePaginator
      */
-    public function __construct(RegistryInterface $doctrineRegistry, ExtjsQueryBuilder $queryBuilder, $usePaginator = true)
+    public function __construct(ManagerRegistry $doctrineRegistry, ExtjsQueryBuilder $queryBuilder, $usePaginator = true)
     {
         $this->doctrineRegistry = $doctrineRegistry;
         $this->queryBuilder = $queryBuilder;

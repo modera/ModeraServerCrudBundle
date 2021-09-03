@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 use Modera\ServerCrudBundle\Persistence\DoctrineRegistryPersistenceHandler;
 use Modera\ServerCrudBundle\Tests\Functional\DummyUser;
 use Sli\ExtJsIntegrationBundle\QueryBuilder\ExtjsQueryBuilder;
-use Symfony\Bridge\Doctrine\RegistryInterface;
+use Doctrine\Common\Persistence\ManagerRegistry;
 
 class DummyAddress
 {
@@ -108,7 +108,7 @@ class DoctrineRegistryPersistenceHandlerTest extends \PHPUnit_Framework_TestCase
 
     private function createDummyRegistry(array $classToEntityManagersMapping)
     {
-        $r = \Phake::mock(RegistryInterface::class);
+        $r = \Phake::mock(ManagerRegistry::class);
 
         $meta = \Phake::mock(ClassMetadata::class);
         \Phake::when($meta)
