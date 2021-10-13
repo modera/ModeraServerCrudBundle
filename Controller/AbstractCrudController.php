@@ -19,6 +19,7 @@ use Modera\ServerCrudBundle\Persistence\PersistenceHandlerInterface;
 use Modera\ServerCrudBundle\Validation\DefaultEntityValidator;
 use Modera\ServerCrudBundle\Validation\ValidationResult;
 use Modera\FoundationBundle\Controller\AbstractBaseController;
+use Modera\DirectBundle\Controller\ControllerTrait;
 use Modera\DirectBundle\Annotation\Remote;
 use Sli\AuxBundle\Util\Toolkit;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -40,6 +41,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 abstract class AbstractCrudController extends AbstractBaseController implements CrudControllerInterface
 {
+    use ControllerTrait;
+
     /**
      * @return array
      */
