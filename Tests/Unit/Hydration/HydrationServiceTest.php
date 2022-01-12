@@ -47,7 +47,7 @@ class ArticleComment
  * @author    Sergei Lissovski <sergei.lissovski@modera.org>
  * @copyright 2013 Modera Foundation
  */
-class HydrationServiceTest extends \PHPUnit_Framework_TestCase
+class HydrationServiceTest extends \PHPUnit\Framework\TestCase
 {
     private $container;
 
@@ -58,7 +58,7 @@ class HydrationServiceTest extends \PHPUnit_Framework_TestCase
     private $article;
 
     // override
-    public function setUp()
+    public function setUp(): void
     {
         $this->container = $this->createMock('Symfony\Component\DependencyInjection\ContainerInterface');
 

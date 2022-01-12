@@ -10,13 +10,13 @@ use Modera\ServerCrudBundle\Hydration\UnknownHydrationProfileException;
 /**
  * @author Sergei Lissovski <sergei.lissovski@gmail.com>
  */
-class ConfigAnalyzerTest extends \PHPUnit_Framework_TestCase
+class ConfigAnalyzerTest extends \PHPUnit\Framework\TestCase
 {
     /* @var ConfigAnalyzer */
     private $config;
     private $rawConfig;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->rawConfig = array(
             'groups' => array(

@@ -14,14 +14,14 @@ require_once __DIR__.'/../../Fixtures/DummyInterceptor.php';
  * @author    Sergei Lissovski <sergei.lissovski@modera.org>
  * @copyright 2014 Modera Foundation
  */
-class InterceptorsManagerTest extends \PHPUnit_Framework_TestCase
+class InterceptorsManagerTest extends \PHPUnit\Framework\TestCase
 {
     /* @var InterceptorsManager */
     private $mgr;
     private $provider;
     private $controller;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->provider = $this->createMock(ContributorInterface::CLAZZ);
         $this->mgr = new InterceptorsManager($this->provider);

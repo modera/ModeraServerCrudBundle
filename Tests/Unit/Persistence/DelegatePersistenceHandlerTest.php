@@ -9,7 +9,7 @@ use Modera\ServerCrudBundle\Persistence\PersistenceHandlerInterface;
  * @author    Sergei Lissovski <sergei.lissovski@modera.org>
  * @copyright 2016 Modera Foundation
  */
-class DelegatePersistenceHandlerTest extends \PHPUnit_Framework_TestCase
+class DelegatePersistenceHandlerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var DelegatePersistenceHandler
@@ -18,7 +18,7 @@ class DelegatePersistenceHandlerTest extends \PHPUnit_Framework_TestCase
 
     private $delegate;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->delegate = \Phake::mock(PersistenceHandlerInterface::class);
         $this->handler = new DelegatePersistenceHandler($this->delegate);

@@ -24,7 +24,7 @@ class DummyExceptionHandler implements ExceptionHandlerInterface
  * @author    Sergei Lissovski <sergei.lissovski@modera.org>
  * @copyright 2014 Modera Foundation
  */
-class EnvAwareExceptionHandlerTest extends \PHPUnit_Framework_TestCase
+class EnvAwareExceptionHandlerTest extends \PHPUnit\Framework\TestCase
 {
     /* @var EnvAwareExceptionHandler $handler */
     private $handler;
@@ -32,7 +32,7 @@ class EnvAwareExceptionHandlerTest extends \PHPUnit_Framework_TestCase
     private $handlersProvider;
     private $kernel;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->handlersProvider = $this->createMock(ContributorInterface::CLAZZ);
         $this->kernel = $this->createMock('Symfony\Component\HttpKernel\Kernel', array(), array(), '', false);

@@ -9,7 +9,7 @@ use Modera\ServerCrudBundle\Security\SecurityControllerActionsInterceptor;
  * @author    Sergei Lissovski <sergei.lissovski@modera.org>
  * @copyright 2014 Modera Foundation
  */
-class ControllerActionInterceptorsProviderTest extends \PHPUnit_Framework_TestCase
+class ControllerActionInterceptorsProviderTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetItems()
     {

@@ -11,7 +11,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @author    Alex Plaksin <alex.plaksin@modera.net>
  * @copyright 2016 Modera Foundation
  */
-class AbstractCrudControllerTest extends \PHPUnit_Framework_TestCase
+class AbstractCrudControllerTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetDataMapper_ContainerParameter()
     {

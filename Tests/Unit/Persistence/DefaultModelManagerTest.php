@@ -8,12 +8,12 @@ use Modera\ServerCrudBundle\Persistence\DefaultModelManager;
  * @author    Sergei Lissovski <sergei.lissovski@modera.org>
  * @copyright 2013 Modera Foundation
  */
-class DefaultModelManagerTest extends \PHPUnit_Framework_TestCase
+class DefaultModelManagerTest extends \PHPUnit\Framework\TestCase
 {
     /* @var DefaultModelManager $mgr */
     private $mgr;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->mgr = new DefaultModelManager();
     }

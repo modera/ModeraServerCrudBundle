@@ -6,7 +6,7 @@ parameters:
 
 framework:
     secret:          Hell yeah!
-    router:          { resource: "%kernel.root_dir%/config/routing.yml" }
+    router:          { resource: "%kernel.project_dir%/app/config/routing.yml" }
     csrf_protection: true
     session:         ~
 
@@ -31,7 +31,7 @@ doctrine:
         mappings:
             fixtures:
                 type: annotation
-                dir: "%kernel.root_dir%/../../Entity"
+                dir: "%kernel.project_dir%/../Entity"
                 is_bundle: false
                 prefix: Modera\ServerCrudBundle\Tests\Functional
 

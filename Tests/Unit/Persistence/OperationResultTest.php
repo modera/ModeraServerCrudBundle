@@ -8,7 +8,7 @@ use Modera\ServerCrudBundle\Persistence\OperationResult;
  * @author    Sergei Lissovski <sergei.lissovski@modera.org>
  * @copyright 2014 Modera Foundation
  */
-class OperationResultTest extends \PHPUnit_Framework_TestCase
+class OperationResultTest extends \PHPUnit\Framework\TestCase
 {
     public function testMerge()
     {

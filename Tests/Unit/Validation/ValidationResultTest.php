@@ -8,7 +8,7 @@ use Modera\ServerCrudBundle\Validation\ValidationResult;
  * @author    Sergei Lissovski <sergei.lissovski@modera.org>
  * @copyright 2013 Modera Foundation
  */
-class ValidationResultTest extends \PHPUnit_Framework_TestCase
+class ValidationResultTest extends \PHPUnit\Framework\TestCase
 {
     public function testHowWellItWorks()
     {

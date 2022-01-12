@@ -140,7 +140,7 @@ abstract class AbstractCrudController extends AbstractBaseController implements 
         $config = $this->container->getParameter(ModeraServerCrudExtension::CONFIG_KEY);
 
         try {
-            return $this->container->get(isset($config[$serviceType]) ? $config[$serviceType] : null);
+            return $this->container->get(isset($config[$serviceType]) ? $config[$serviceType] : '');
         } catch (\Exception $e) {
             throw BadConfigException::create($serviceType, $config, $e);
         }
