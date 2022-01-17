@@ -20,7 +20,7 @@ class SecurityControllerActionsInterceptorTest extends \PHPUnit\Framework\TestCa
 
     protected function setUp(): void
     {
-        $this->controller = $this->createMock(AbstractCrudController::clazz());
+        $this->controller = $this->createMock(AbstractCrudController::class);
         $this->authorizationChecker = $this->createMock('Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface');
         $this->interceptor = new SecurityControllerActionsInterceptor($this->authorizationChecker);
     }

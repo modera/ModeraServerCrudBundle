@@ -9,9 +9,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Sli\ExtJsIntegrationBundle\QueryBuilder\ExtjsQueryBuilder;
 
 /**
- * This implementation relies of ManagerRegistry so it can support many EntityManagers for entities (previous
- * implementation - DoctrinePersistenceHandler used a global EntityManager instance, so it was not really possible
- * without hacks to have several entity managers properly handled by the bundle).
+ * This implementation relies of ManagerRegistry so it can support many EntityManagers for entities.
  *
  * @author    Sergei Lissovski <sergei.lissovski@modera.org>
  * @copyright 2016 Modera Foundation
@@ -255,10 +253,5 @@ class DoctrineRegistryPersistenceHandler implements PersistenceHandlerInterface
         }
 
         return $result;
-    }
-
-    public static function clazz()
-    {
-        return get_called_class();
     }
 }

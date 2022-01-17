@@ -127,9 +127,4 @@ class SecurityControllerActionsInterceptor implements ControllerActionsIntercept
     {
         $this->checkAccess('getNewRecordValues', $params, $controller);
     }
-
-    public static function clazz()
-    {
-        return get_called_class();
-    }
 }

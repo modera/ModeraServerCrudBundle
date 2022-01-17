@@ -122,9 +122,4 @@ class OperationResult
 
         return $new;
     }
-
-    public static function clazz()
-    {
-        return get_called_class();
-    }
 }

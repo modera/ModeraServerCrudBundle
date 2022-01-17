@@ -10,6 +10,9 @@ use Modera\ServerCrudBundle\Tests\Fixtures\Bundle\Contributions\ControllerAction
 use Symfony\Component\Validator\Constraints as Assert;
 use Sli\AuxBundle\Util\Toolkit;
 
+class DummyException extends \RuntimeException
+{}
+
 /**
  * @Orm\Entity
  * @Orm\Table("_testing_article")
@@ -48,7 +51,7 @@ class DummyArticle
         if (self::$suicideEngaged) {
             self::$suicideEngaged = false;
 
-            throw new \RuntimeException('boom');
+            throw new DummyException('boom');
         }
 
         self::$suicideEngaged = false;
@@ -69,11 +72,6 @@ class DummyArticle
         $this->title = $title;
     }
 
-    public static function clazz()
-    {
-        return get_called_class();
-    }
-
     public static function formatNewValues(array $params, array $config, $container)
     {
         return array(
@@ -89,7 +87,7 @@ class DataController extends AbstractCrudController
     public function getConfig()
     {
         return array(
-            'entity' => DummyArticle::clazz(),
+            'entity' => DummyArticle::class,
             'hydration' => array(
                 'groups' => array(
                     'form' => array(
@@ -107,7 +105,7 @@ class DataController extends AbstractCrudController
                         );
                     },
                     'suicide' => function () {
-                        throw new \Exception();
+                        throw new DummyException('suicide');
                     },
                 ),
                 'profiles' => array(
@@ -142,13 +140,13 @@ class AbstractCrudControllerTest extends FunctionalTestCase
     // override
     public static function doSetUpBeforeClass()
     {
-        Toolkit::createTableFoEntity(self::$em, DummyArticle::clazz());
+        Toolkit::createTableFoEntity(self::$em, DummyArticle::class);
     }
 
     // override
     public static function doTearDownAfterClass()
     {
-        Toolkit::dropTableForEntity(self::$em, DummyArticle::clazz());
+        Toolkit::dropTableForEntity(self::$em, DummyArticle::class);
     }
 
     /**
@@ -231,21 +229,16 @@ class AbstractCrudControllerTest extends FunctionalTestCase
         $this->assertEquals('Some text goes here', $form['body']);
 
         /* @var DummyArticle $article */
-        $article = self::$em->getRepository(DummyArticle::clazz())->find($form['id']);
-        $this->assertInstanceOf(DummyArticle::clazz(), $article);
+        $article = self::$em->getRepository(DummyArticle::class)->find($form['id']);
+        $this->assertInstanceOf(DummyArticle::class, $article);
         $this->assertEquals('Some title', $article->title);
         $this->assertEquals('Some text goes here', $article->body);
     }
 
-    private function assertValidExceptionResult(array $result)
-    {
-        $this->assertTrue(is_array($result));
-        $this->assertArrayHasKey('success', $result);
-        $this->assertFalse($result['success']);
-    }
-
     public function testCreateActionWithException()
     {
+        $this->expectException(DummyException::class);
+
         DummyArticle::$suicideEngaged = true;
 
         $result = $this->controller->createAction(array(
@@ -254,8 +247,6 @@ class AbstractCrudControllerTest extends FunctionalTestCase
                 'body' => 'hola',
             ),
         ));
-
-        $this->assertValidExceptionResult($result);
     }
 
     /**
@@ -281,7 +272,7 @@ class AbstractCrudControllerTest extends FunctionalTestCase
 
     public function testListAction()
     {
-        $this->assertEquals(0, count(self::$em->getRepository(DummyArticle::clazz())->findAll()));
+        $this->assertEquals(0, count(self::$em->getRepository(DummyArticle::class)->findAll()));
 
         $this->loadDummyData();
 
@@ -332,6 +323,8 @@ class AbstractCrudControllerTest extends FunctionalTestCase
     {
         $this->loadDummyData();
 
+        $this->expectException(DummyException::class);
+
         DummyArticle::$suicideEngaged = true;
 
         $result = $this->controller->listAction(array(
@@ -339,8 +332,6 @@ class AbstractCrudControllerTest extends FunctionalTestCase
                 'profile' => 'list',
             ),
         ));
-
-        $this->assertValidExceptionResult($result);
     }
 
     public function testRemoveAction()
@@ -379,8 +370,8 @@ class AbstractCrudControllerTest extends FunctionalTestCase
         $this->assertTrue(in_array($ids[0], $removedModels[$modelName]));
         $this->assertTrue(in_array($ids[1], $removedModels[$modelName]));
 
-        $this->assertNull(self::$em->getRepository(DummyArticle::clazz())->find($ids[0]));
-        $this->assertNull(self::$em->getRepository(DummyArticle::clazz())->find($ids[1]));
+        $this->assertNull(self::$em->getRepository(DummyArticle::class)->find($ids[0]));
+        $this->assertNull(self::$em->getRepository(DummyArticle::class)->find($ids[1]));
     }
 
     public function testRemoveActionWithException()
@@ -392,6 +383,8 @@ class AbstractCrudControllerTest extends FunctionalTestCase
             $articles[1]->getId(),
         );
 
+        $this->expectException(DummyException::class);
+
         DummyArticle::$suicideEngaged = true;
 
         $result = $this->controller->removeAction(array(
@@ -402,8 +395,6 @@ class AbstractCrudControllerTest extends FunctionalTestCase
                 ),
             ),
         ));
-
-        $this->assertValidExceptionResult($result);
     }
 
     public function testGetAction()
@@ -443,6 +434,8 @@ class AbstractCrudControllerTest extends FunctionalTestCase
     {
         $articles = $this->loadDummyData();
 
+        $this->expectException(DummyException::class);
+
         DummyArticle::$suicideEngaged = true;
 
         $requestParams = array(
@@ -457,8 +450,6 @@ class AbstractCrudControllerTest extends FunctionalTestCase
             ),
         );
         $result = $this->controller->getAction($requestParams);
-
-        $this->assertValidExceptionResult($result);
     }
 
     public function testUpdateAction()
@@ -496,7 +487,7 @@ class AbstractCrudControllerTest extends FunctionalTestCase
         self::$em->clear();
 
         /* @var DummyArticle $fetchedArticle */
-        $fetchedArticle = self::$em->getRepository(DummyArticle::clazz())->find($article->id);
+        $fetchedArticle = self::$em->getRepository(DummyArticle::class)->find($article->id);
 
         $this->assertEquals('title, yo', $fetchedArticle->title);
         $this->assertEquals($article->body, $fetchedArticle->body);
@@ -526,7 +517,7 @@ class AbstractCrudControllerTest extends FunctionalTestCase
         self::$em->clear();
 
         /* @var DummyArticle $updatedArticle */
-        $updatedArticle = self::$em->getRepository(DummyArticle::clazz())->find($article->id);
+        $updatedArticle = self::$em->getRepository(DummyArticle::class)->find($article->id);
 
         $this->assertNotNull($updatedArticle);
         $this->assertEquals('new title', $updatedArticle->title);
@@ -588,11 +579,11 @@ class AbstractCrudControllerTest extends FunctionalTestCase
 
         self::$em->clear();
 
-        $article1 = self::$em->find(DummyArticle::clazz(), $entities[0]->id);
+        $article1 = self::$em->find(DummyArticle::class, $entities[0]->id);
         $this->assertEquals('body0_foo', $article1->body);
         $this->assertEquals('title0_foo', $article1->title);
 
-        $article2 = self::$em->find(DummyArticle::clazz(), $entities[1]->id);
+        $article2 = self::$em->find(DummyArticle::class, $entities[1]->id);
         $this->assertEquals('body1_foo', $article2->body);
         $this->assertEquals('title1_foo', $article2->title);
     }
@@ -637,11 +628,11 @@ class AbstractCrudControllerTest extends FunctionalTestCase
         self::$em->clear();
 
         // none of them must have been updated
-        $article1 = self::$em->find(DummyArticle::clazz(), $entities[0]->id);
+        $article1 = self::$em->find(DummyArticle::class, $entities[0]->id);
         $this->assertEquals('body0', $article1->body);
         $this->assertEquals('title0', $article1->title);
 
-        $article2 = self::$em->find(DummyArticle::clazz(), $entities[1]->id);
+        $article2 = self::$em->find(DummyArticle::class, $entities[1]->id);
         $this->assertEquals('body1', $article2->body);
         $this->assertEquals('title1', $article2->title);
     }
@@ -693,16 +684,16 @@ class AbstractCrudControllerTest extends FunctionalTestCase
 
         self::$em->clear();
 
-        $article1 = self::$em->find(DummyArticle::clazz(), $entities[0]->id);
+        $article1 = self::$em->find(DummyArticle::class, $entities[0]->id);
         $this->assertEquals('hello', $article1->title);
         $this->assertEquals($entities[0]->body, $article1->body);
 
-        $article3 = self::$em->find(DummyArticle::clazz(), $entities[2]->id);
+        $article3 = self::$em->find(DummyArticle::class, $entities[2]->id);
         $this->assertEquals('hello', $article3->title);
         $this->assertEquals($entities[2]->body, $article3->body);
 
         // should not have been updated
-        $article2 = self::$em->find(DummyArticle::clazz(), $entities[1]->id);
+        $article2 = self::$em->find(DummyArticle::class, $entities[1]->id);
         $this->assertEquals('title1', $article2->title);
         $this->assertEquals($entities[1]->body, $article2->body);
     }
@@ -760,6 +751,8 @@ class AbstractCrudControllerTest extends FunctionalTestCase
     {
         $articles = $this->loadDummyData();
 
+        $this->expectException(DummyException::class);
+
         DummyArticle::$suicideEngaged = true;
 
         $result = $this->controller->updateAction(array(
@@ -769,8 +762,6 @@ class AbstractCrudControllerTest extends FunctionalTestCase
                 'body' => 'ogo',
             ),
         ));
-
-        $this->assertValidExceptionResult($result);
     }
 
     public function testGetNewRecordValuesAction()

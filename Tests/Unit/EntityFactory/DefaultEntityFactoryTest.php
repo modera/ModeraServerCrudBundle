@@ -12,11 +12,6 @@ class DummyClassWithNoMandatoryArgumentsConstructor
     {
         $this->arg1 = $arg1;
     }
-
-    public static function clazz()
-    {
-        return get_called_class();
-    }
 }
 
 class DummyClassWithMandatoryConstructorArgs
@@ -26,11 +21,6 @@ class DummyClassWithMandatoryConstructorArgs
     public function __construct($arg1)
     {
         $this->arg1 = $arg1;
-    }
-
-    public static function clazz()
-    {
-        return get_called_class();
     }
 }
 
@@ -58,18 +48,18 @@ class DefaultEntityFactoryTest extends \PHPUnit\Framework\TestCase
     public function testCreateWithConstructorWithNoMandatoryParameters()
     {
         /* @var DummyClassWithNoMandatoryArgumentsConstructor $object */
-        $object = $this->factory->create(array(), array('entity' => DummyClassWithNoMandatoryArgumentsConstructor::clazz()));
+        $object = $this->factory->create(array(), array('entity' => DummyClassWithNoMandatoryArgumentsConstructor::class));
 
-        $this->assertInstanceOf(DummyClassWithNoMandatoryArgumentsConstructor::clazz(), $object);
+        $this->assertInstanceOf(DummyClassWithNoMandatoryArgumentsConstructor::class, $object);
         $this->assertEquals('default-value', $object->arg1);
     }
 
     public function testCreateWithConstructorWithMandatoryParameters()
     {
         /* @var DummyClassWithMandatoryConstructorArgs $object */
-        $object = $this->factory->create(array(), array('entity' => DummyClassWithMandatoryConstructorArgs::clazz()));
+        $object = $this->factory->create(array(), array('entity' => DummyClassWithMandatoryConstructorArgs::class));
 
-        $this->assertInstanceOf(DummyClassWithMandatoryConstructorArgs::clazz(), $object);
+        $this->assertInstanceOf(DummyClassWithMandatoryConstructorArgs::class, $object);
         $this->assertEquals('foo', $object->arg1);
     }
 }

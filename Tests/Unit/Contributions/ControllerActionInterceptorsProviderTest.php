@@ -26,7 +26,7 @@ class ControllerActionInterceptorsProviderTest extends \PHPUnit\Framework\TestCa
         $items = $provider->getItems();
 
         $this->assertEquals(1, count($items));
-        $this->assertInstanceOf(SecurityControllerActionsInterceptor::clazz(), $items[0]);
+        $this->assertInstanceOf(SecurityControllerActionsInterceptor::class, $items[0]);
 
         $items2 = $provider->getItems();
 

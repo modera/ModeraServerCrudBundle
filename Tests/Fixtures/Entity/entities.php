@@ -68,11 +68,6 @@ class DummyUser
             $this->notes[] = $note;
         }
     }
-
-    public static function clazz()
-    {
-        return get_called_class();
-    }
 }
 
 /**
@@ -120,10 +115,5 @@ class DummyNote
     public function setUser(DummyUser $user)
     {
         $this->user = $user;
-    }
-
-    public static function clazz()
-    {
-        return get_called_class();
     }
 }

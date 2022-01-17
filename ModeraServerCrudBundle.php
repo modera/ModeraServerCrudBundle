@@ -13,13 +13,12 @@ class ModeraServerCrudBundle extends Bundle
      */
     public function build(ContainerBuilder $container)
     {
-        // also see \Modera\ServerCrudBundle\ExceptionHandling\EnvAwareExceptionHandler
+        // also see \Modera\ServerCrudBundle\ExceptionHandling\ExceptionHandlerInterface
         $exceptionHandlersProvider = new ExtensionPoint('modera_server_crud.exception_handling.handlers');
         $exceptionHandlersProvider->setDescription('Allows to add additional exception handlers that will be used by AbstractCrudController.');
         $exceptionHandlersProviderDescription = <<<TEXT
 You will need to use this extension point if you need to apply some custom handling to server-side exceptions. For more
-details please see \Modera\ServerCrudBundle\ExceptionHandling\EnvAwareExceptionHandler and
-\Modera\ServerCrudBundle\ExceptionHandling\ExceptionHandlerInterface.
+details please see \Modera\ServerCrudBundle\ExceptionHandling\ExceptionHandlerInterface.
 TEXT;
         $exceptionHandlersProvider->setDetailedDescription($exceptionHandlersProviderDescription);
         $container->addCompilerPass($exceptionHandlersProvider->createCompilerPass());

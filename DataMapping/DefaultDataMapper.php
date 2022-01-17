@@ -50,9 +50,4 @@ class DefaultDataMapper implements DataMapperInterface
 
         $this->mapper->mapEntity($entity, $params, $allowedFields);
     }
-
-    public static function clazz()
-    {
-        return get_called_class();
-    }
 }

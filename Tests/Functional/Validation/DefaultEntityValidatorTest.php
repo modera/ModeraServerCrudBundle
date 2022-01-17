@@ -52,7 +52,7 @@ class DefaultEntityValidatorTest extends FunctionalTestCase
 
     public function testIfServiceExists()
     {
-        $this->assertInstanceOf(DefaultEntityValidator::clazz(), $this->validator);
+        $this->assertInstanceOf(DefaultEntityValidator::class, $this->validator);
     }
 
     public function testValidateBySymfonyServices()
@@ -66,7 +66,7 @@ class DefaultEntityValidatorTest extends FunctionalTestCase
 
         $result = $this->validator->validate($entity, $config);
 
-        $this->assertInstanceOf(ValidationResult::clazz(), $result);
+        $this->assertInstanceOf(ValidationResult::class, $result);
         $this->assertTrue($result->hasErrors());
 
         $fieldErrors = $result->getFieldErrors('id');
@@ -87,10 +87,10 @@ class DefaultEntityValidatorTest extends FunctionalTestCase
 
         $result = $this->validator->validate($entity, $config);
 
-        $this->assertInstanceOf(ValidationResult::clazz(), $result);
+        $this->assertInstanceOf(ValidationResult::class, $result);
         $this->assertTrue($result->hasErrors());
         $this->assertTrue(in_array('an error', $result->getGeneralErrors()));
-        $this->assertInstanceOf(ValidationResult::clazz(), $entity->givenValidationResult);
+        $this->assertInstanceOf(ValidationResult::class, $entity->givenValidationResult);
         $this->assertInstanceOf('Symfony\Component\DependencyInjection\ContainerInterface', $entity->givenContainer);
     }
 
@@ -105,10 +105,10 @@ class DefaultEntityValidatorTest extends FunctionalTestCase
 
         $result = $this->validator->validate($entity, $config);
 
-        $this->assertInstanceOf(ValidationResult::clazz(), $result);
+        $this->assertInstanceOf(ValidationResult::class, $result);
         $this->assertTrue($result->hasErrors());
         $this->assertTrue(in_array('an error', $result->getGeneralErrors()));
-        $this->assertInstanceOf(ValidationResult::clazz(), $entity->givenValidationResult);
+        $this->assertInstanceOf(ValidationResult::class, $entity->givenValidationResult);
         $this->assertInstanceOf('Symfony\Component\DependencyInjection\ContainerInterface', $entity->givenContainer);
 
         $this->assertEquals(1, count($result->getFieldErrors('id')));

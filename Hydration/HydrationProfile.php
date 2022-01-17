@@ -99,9 +99,4 @@ class HydrationProfile implements HydrationProfileInterface
 
         return $this;
     }
-
-    public static function clazz()
-    {
-        return get_called_class();
-    }
 }

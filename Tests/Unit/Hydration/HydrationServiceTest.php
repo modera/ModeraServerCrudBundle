@@ -218,7 +218,7 @@ class HydrationServiceTest extends \PHPUnit\Framework\TestCase
 
         $this->assertNotNull($thrownException);
         $this->assertEquals('show_stopper', $thrownException->getGroupName());
-        $this->assertInstanceOf(HydrationProfile::clazz(), $thrownException->getProfile());
+        $this->assertInstanceOf(HydrationProfile::class, $thrownException->getProfile());
         $this->assertInstanceOf('stdClass', $thrownException->getResult());
     }
 

@@ -48,7 +48,7 @@ class ConfigAnalyzerTest extends \PHPUnit\Framework\TestCase
     {
         $result = $this->config->getProfileDefinition('form');
 
-        $this->assertInstanceOf(HydrationProfile::clazz(), $result);
+        $this->assertInstanceOf(HydrationProfile::class, $result);
         $this->assertSame($this->rawConfig['profiles']['form'], $result);
     }
 
@@ -57,7 +57,7 @@ class ConfigAnalyzerTest extends \PHPUnit\Framework\TestCase
         /* @var HydrationProfile $result */
         $result = $this->config->getProfileDefinition('mixed');
 
-        $this->assertInstanceOf(HydrationProfile::clazz(), $result);
+        $this->assertInstanceOf(HydrationProfile::class, $result);
         $this->assertTrue($result->isGroupingNeeded());
 
         $groups = $result->getGroups();
@@ -72,7 +72,7 @@ class ConfigAnalyzerTest extends \PHPUnit\Framework\TestCase
         /* @var HydrationProfile $result */
         $result = $this->config->getProfileDefinition('list');
 
-        $this->assertInstanceOf(HydrationProfile::clazz(), $result);
+        $this->assertInstanceOf(HydrationProfile::class, $result);
         $this->assertFalse($result->isGroupingNeeded());
         $this->assertSame(array('list'), $result->getGroups());
     }

@@ -25,7 +25,7 @@ class InterceptorsManagerTest extends \PHPUnit\Framework\TestCase
     {
         $this->provider = $this->createMock(ContributorInterface::CLAZZ);
         $this->mgr = new InterceptorsManager($this->provider);
-        $this->controller = $this->createMock(AbstractCrudController::clazz());
+        $this->controller = $this->createMock(AbstractCrudController::class);
     }
 
     /**

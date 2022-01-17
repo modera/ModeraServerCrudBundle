@@ -83,9 +83,4 @@ class ValidationResult
 
         return isset($array['field_errors']) || isset($array['general_errors']);
     }
-
-    public static function clazz()
-    {
-        return get_called_class();
-    }
 }

@@ -78,30 +78,8 @@ The main thing you need to know that every response that comes from server side 
 property - `success`. This property can be used on client side to understand if a request sent to server side controller
 was processed properly or something went wrong. When exception is thrown during processing your request an implementation
 of \Modera\ServerCrudBundle\ExceptionHandling\ExceptionHandlerInterface will be used to convert the thrown exception to
-a data structure that will be sent to client-side. By default \Modera\ServerCrudBundle\ExceptionHandling\EnvAwareExceptionHandler
-is going to be used and depending on an environment you are working with ( dev, prod ) the returned data will look either
-like this:
-
-    // for exception like this:
-    throw new \RuntimeException('oops');
-
-    // dev
-    array(
-        'success' => false,
-        'exception' => true,
-        'exception_class' => 'RuntimeException',
-        'stack_trace' => '...', // stack trace
-        'file' => 'foofile.php', // full path a file where exception has occurred
-        'line' => 15,
-        'message' => 'oops'
-    )
-
-For production environment returned information will be more scarce:
-
-    array(
-        'success' => false,
-        'exception' => true
-    )
+a data structure that will be sent to client-side. By default \Modera\ServerCrudBundle\ExceptionHandling\BypassExceptionHandler
+is going to be used.
 
 ## Hydrating data
 
@@ -595,7 +573,7 @@ When this query is executed AbstractCrudController will fetch one by one two rec
 very important not to forget to specify primary key values for your records so that server-side logic could use
 them to uniqually identify your records. In this example we use conventional automatically managed 'id' primary key field
 but AbstractCrudController doesn't limit you to that, it depends on an implementation of PersistenceHandlerInterface which
-is configured to be used by AbstractCrudController, default implementation DoctrinePersistenceHandler is able
+is configured to be used by AbstractCrudController, default implementation DoctrineRegistryPersistenceHandler is able
 to deal with composite primary keys out of the box.
 
 There's one more important thing that we should mention before moving to the next section - errors handling. When it

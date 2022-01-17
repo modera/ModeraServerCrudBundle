@@ -49,9 +49,4 @@ class DefaultEntityValidator implements EntityValidatorInterface
 
         return $validationResult;
     }
-
-    public static function clazz()
-    {
-        return get_called_class();
-    }
 }

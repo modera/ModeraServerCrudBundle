@@ -637,9 +637,4 @@ abstract class AbstractCrudController extends AbstractBaseController implements 
             return $this->createExceptionResponse($e, ExceptionHandlerInterface::OPERATION_UPDATE);
         }
     }
-
-    public static function clazz()
-    {
-        return get_called_class();
-    }
 }

@@ -50,7 +50,7 @@ class DefaultDataMapperTest extends FunctionalTestCase
         /* @var DefaultDataMapper $mapper */
         $mapper = self::$container->get('modera_server_crud.data_mapping.default_data_mapper');
 
-        $this->assertInstanceOf(DefaultDataMapper::clazz(), $mapper);
+        $this->assertInstanceOf(DefaultDataMapper::class, $mapper);
 
         $params = array(
             'firstname' => 'Vassily',

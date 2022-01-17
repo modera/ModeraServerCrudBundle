@@ -24,7 +24,7 @@ class OperationResultTest extends \PHPUnit\Framework\TestCase
 
         $mergedResult = $result->merge($anotherResult);
 
-        $this->assertInstanceOf(OperationResult::clazz(), $mergedResult);
+        $this->assertInstanceOf(OperationResult::class, $mergedResult);
 
         $this->assertEquals(2, count($mergedResult->getCreatedEntities()));
         $this->assertEquals(2, count($mergedResult->getUpdatedEntities()));
