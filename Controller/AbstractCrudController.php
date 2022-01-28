@@ -591,10 +591,12 @@ abstract class AbstractCrudController extends AbstractBaseController implements 
                         $dataMapper($recordParams, $entity, $this->getDataMapper(), $this->container);
 
                         if ($validator) {
+                            $_params = $params;
+                            $_params['record'] = $recordParams;
+                            unset($_params['records']);
+
                             /* @var ValidationResult $validationResult */
-                            // FIXME: instead of $params we need to pass $recordParams here! Cannot fix it right now
-                            // because it will break BC! Needs to be done in 3.0
-                            $validationResult = $validator($params, $entity, $this->getEntityValidator(), $config, $this->container);
+                            $validationResult = $validator($_params, $entity, $this->getEntityValidator(), $config, $this->container);
                             if ($validationResult->hasErrors()) {
                                 $pkFields = $this->getPersistenceHandler()->resolveEntityPrimaryKeyFields($config['entity']);
 
