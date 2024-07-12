@@ -14,8 +14,7 @@ interface DataMapperInterface
     /**
      * Should bind $params onto given $entity.
      *
-     * @param array  $params
-     * @param object $entity
+     * @param array<string, mixed> $params
      */
-    public function mapData(array $params, $entity);
+    public function mapData(array $params, object $entity): void;
 }

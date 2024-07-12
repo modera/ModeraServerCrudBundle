@@ -8,23 +8,14 @@ namespace Modera\ServerCrudBundle\Security;
  */
 class AccessDeniedHttpException extends \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException
 {
-    /**
-     * @var string
-     */
-    private $role;
+    private ?string $role = null;
 
-    /**
-     * @param string $role
-     */
-    public function setRole($role)
+    public function setRole(string $role): void
     {
         $this->role = $role;
     }
 
-    /**
-     * @return string
-     */
-    public function getRole()
+    public function getRole(): ?string
     {
         return $this->role;
     }

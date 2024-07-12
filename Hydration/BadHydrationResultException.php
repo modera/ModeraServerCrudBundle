@@ -3,39 +3,26 @@
 namespace Modera\ServerCrudBundle\Hydration;
 
 /**
- * @since 2.53.0
- *
  * @author    Sergei Lissovski <sergei.lissovski@modera.org>
  * @copyright 2016 Modera Foundation
  */
 class BadHydrationResultException extends \RuntimeException
 {
     /**
-     * @var mixed
+     * @var mixed Mixed value
      */
     private $result;
 
-    /**
-     * @var mixed
-     */
-    private $profile;
+    private ?HydrationProfile $profile = null;
+
+    private ?string $groupName = null;
 
     /**
-     * @var string
+     * @param mixed $result Mixed value
      */
-    private $groupName;
-
-    /**
-     * @param string $message
-     * @param mixed  $result
-     * @param mixed  $profile
-     * @param string $groupName
-     *
-     * @return BadHydrationResultException
-     */
-    public static function create($message, $result = null, $profile = null, $groupName = null)
+    public static function create(string $message, $result = null, ?HydrationProfile $profile = null, ?string $groupName = null): self
     {
-        $me = new static($message);
+        $me = new self($message);
         $me->result = $result;
         $me->profile = $profile;
         $me->groupName = $groupName;
@@ -44,25 +31,19 @@ class BadHydrationResultException extends \RuntimeException
     }
 
     /**
-     * @return mixed
+     * @return mixed Mixed value
      */
     public function getResult()
     {
         return $this->result;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getProfile()
+    public function getProfile(): ?HydrationProfile
     {
         return $this->profile;
     }
 
-    /**
-     * @return string
-     */
-    public function getGroupName()
+    public function getGroupName(): ?string
     {
         return $this->groupName;
     }

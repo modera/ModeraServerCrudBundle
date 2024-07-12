@@ -2,13 +2,10 @@
 
 namespace Modera\ServerCrudBundle\Tests\Functional\Persistence;
 
-require_once __DIR__.'/../../Fixtures/Entity/entities.php';
-
-use Sli\AuxBundle\Util\Toolkit;
-use Modera\FoundationBundle\Testing\FunctionalTestCase;
 use Modera\ServerCrudBundle\Persistence\PersistenceHandlerInterface;
 use Modera\ServerCrudBundle\Persistence\DoctrineRegistryPersistenceHandler;
 use Modera\ServerCrudBundle\Persistence\OperationResult;
+use Modera\ServerCrudBundle\Tests\Functional\AbstractTestCase;
 use Modera\ServerCrudBundle\Tests\Functional\DummyUser;
 use Modera\ServerCrudBundle\Tests\Functional\DummyNote;
 
@@ -16,26 +13,14 @@ use Modera\ServerCrudBundle\Tests\Functional\DummyNote;
  * @author    Sergei Lissovski <sergei.lissovski@modera.org>
  * @copyright 2016 Modera Foundation
  */
-class DoctrineRegistryPersistenceHandlerTest extends FunctionalTestCase
+class DoctrineRegistryPersistenceHandlerTest extends AbstractTestCase
 {
-    public static function doSetUpBeforeClass()
-    {
-        Toolkit::createTableFoEntity(self::$em, DummyUser::class);
-        Toolkit::createTableFoEntity(self::$em, DummyNote::class);
-    }
-
-    public static function doTearDownAfterClass()
-    {
-        Toolkit::dropTableForEntity(self::$em, DummyNote::class);
-        Toolkit::dropTableForEntity(self::$em, DummyUser::class);
-    }
-
     /**
      * @return PersistenceHandlerInterface
      */
     protected function getHandler()
     {
-        return self::$container->get('modera_server_crud.persistence.doctrine_registry_handler');
+        return self::getContainer()->get('modera_server_crud.persistence.doctrine_registry_handler');
     }
 
     public function testServiceExistence()

@@ -9,10 +9,7 @@ namespace Modera\ServerCrudBundle\Validation;
 interface EntityValidatorInterface
 {
     /**
-     * @param object $entity
-     * @param array  $config
-     *
-     * @return ValidationResult
+     * @param array<string, mixed> $config
      */
-    public function validate($entity, array $config);
+    public function validate(object $entity, array $config): ValidationResult;
 }

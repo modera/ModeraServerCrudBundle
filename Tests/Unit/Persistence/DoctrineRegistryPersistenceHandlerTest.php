@@ -6,7 +6,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Modera\ServerCrudBundle\Persistence\DoctrineRegistryPersistenceHandler;
 use Modera\ServerCrudBundle\Tests\Functional\DummyUser;
-use Sli\ExtJsIntegrationBundle\QueryBuilder\ExtjsQueryBuilder;
+use Modera\ServerCrudBundle\QueryBuilder\ArrayQueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 class DummyAddress
@@ -44,7 +44,7 @@ class DoctrineRegistryPersistenceHandlerTest extends \PHPUnit\Framework\TestCase
             get_class($address1) => $em2,
         ));
 
-        $handler = new DoctrineRegistryPersistenceHandler($registry, \Phake::mock(ExtjsQueryBuilder::class));
+        $handler = new DoctrineRegistryPersistenceHandler($registry, \Phake::mock(ArrayQueryBuilder::class));
 
         $handler->updateBatch([$user1, $address1, $address2]);
 
@@ -82,7 +82,7 @@ class DoctrineRegistryPersistenceHandlerTest extends \PHPUnit\Framework\TestCase
             get_class($address1) => $em2,
         ));
 
-        $handler = new DoctrineRegistryPersistenceHandler($registry, \Phake::mock(ExtjsQueryBuilder::class));
+        $handler = new DoctrineRegistryPersistenceHandler($registry, \Phake::mock(ArrayQueryBuilder::class));
 
         $handler->remove([$user1, $address1, $address2]);
 

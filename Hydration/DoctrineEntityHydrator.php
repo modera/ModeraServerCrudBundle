@@ -2,9 +2,10 @@
 
 namespace Modera\ServerCrudBundle\Hydration;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 /**
  * This hydrator relies on existence of service container with id "doctrine.orm.entity_manager".
@@ -14,17 +15,22 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
  */
 class DoctrineEntityHydrator
 {
-    private $type;
-
-    private $accessor;
-
-    private $excludedFields = array();
-    private $associativeFieldMappings = array();
+    private ?PropertyAccessorInterface $accessor = null;
 
     /**
-     * @return DoctrineEntityHydrator
+     * @var string[]
      */
-    public static function create(array $excludedFields = array())
+    private array $excludedFields = [];
+
+    /**
+     * @var array<string, string>
+     */
+    private array $associativeFieldMappings = [];
+
+    /**
+     * @param string[] $excludedFields
+     */
+    public static function create(array $excludedFields = []): self
     {
         $me = new self();
         $me->excludeFields($excludedFields);
@@ -33,26 +39,16 @@ class DoctrineEntityHydrator
     }
 
     /**
-     * @throws \LogicException
-     *
      * @param string[] $fields
-     *
-     * @return DoctrineEntityHydrator
      */
-    public function excludeFields(array $fields)
+    public function excludeFields(array $fields): self
     {
         $this->excludedFields = $fields;
 
         return $this;
     }
 
-    /**
-     * @param string $relationFieldName
-     * @param string $expression
-     *
-     * @return DoctrineEntityHydrator
-     */
-    public function mapRelation($relationFieldName, $expression)
+    public function mapRelation(string $relationFieldName, string $expression): self
     {
         $this->associativeFieldMappings[$relationFieldName] = $expression;
 
@@ -60,43 +56,38 @@ class DoctrineEntityHydrator
     }
 
     /**
-     * @param object             $entity
-     * @param ContainerInterface $container
-     *
-     * @return array
+     * @return array<string, mixed>
      */
-    public function __invoke($entity, ContainerInterface $container)
+    public function __invoke(object $entity, ContainerInterface $container): array
     {
-        /* @var EntityManager $em */
+        /** @var EntityManagerInterface $em */
         $em = $container->get('doctrine.orm.entity_manager');
 
         if (!$this->accessor) {
             $this->accessor = PropertyAccess::createPropertyAccessor();
         }
 
-        $meta = $em->getClassMetadata(get_class($entity));
+        $meta = $em->getClassMetadata(\get_class($entity));
 
-        $result = array();
+        $result = [];
         foreach ($meta->getFieldNames() as $fieldName) {
             $result[$fieldName] = $this->accessor->getValue($entity, $fieldName);
         }
-
-        $hasToStringMethod = in_array('__toString', get_class_methods(get_class($entity)));
 
         foreach ($meta->getAssociationNames() as $fieldName) {
             if (isset($this->associativeFieldMappings[$fieldName])) {
                 $expression = $this->associativeFieldMappings[$fieldName];
 
                 $result[$fieldName] = $this->accessor->getValue($entity, $expression);
-            } elseif ($hasToStringMethod) {
+            } elseif (\method_exists($entity, '__toString')) {
                 $result[$fieldName] = $entity->__toString();
             }
         }
 
-        $finalResult = array();
+        $finalResult = [];
 
         foreach ($result as $fieldName => $fieldValue) {
-            if (in_array($fieldName, $this->excludedFields)) {
+            if (\in_array($fieldName, $this->excludedFields)) {
                 continue;
             }
 

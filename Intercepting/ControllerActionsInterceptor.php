@@ -13,52 +13,31 @@ use Modera\ServerCrudBundle\Controller\AbstractCrudController;
  */
 class ControllerActionsInterceptor implements ControllerActionsInterceptorInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function onCreate(array $params, AbstractCrudController $controller)
+    public function onCreate(array $params, AbstractCrudController $controller): void
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function onUpdate(array $params, AbstractCrudController $controller)
+    public function onUpdate(array $params, AbstractCrudController $controller): void
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function onBatchUpdate(array $params, AbstractCrudController $controller)
+    public function onBatchUpdate(array $params, AbstractCrudController $controller): void
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function onGet(array $params, AbstractCrudController $controller)
+    public function onGet(array $params, AbstractCrudController $controller): void
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function onList(array $params, AbstractCrudController $controller)
+    public function onList(array $params, AbstractCrudController $controller): void
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function onRemove(array $params, AbstractCrudController $controller)
+    public function onRemove(array $params, AbstractCrudController $controller): void
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function onGetNewRecordValues(array $params, AbstractCrudController $controller)
+    public function onGetNewRecordValues(array $params, AbstractCrudController $controller): void
     {
     }
 }

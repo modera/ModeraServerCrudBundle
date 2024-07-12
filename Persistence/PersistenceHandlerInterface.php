@@ -13,53 +13,33 @@ interface PersistenceHandlerInterface
     /**
      * Must returns field names which can be used to uniquely identify a record.
      *
-     * @param string $entityClass
-     *
      * @return string[]
      */
-    public function resolveEntityPrimaryKeyFields($entityClass);
+    public function resolveEntityPrimaryKeyFields(string $entityClass): array;
 
-    /**
-     * @param object $entity
-     *
-     * @return OperationResult
-     */
-    public function save($entity);
+    public function save(object $entity): OperationResult;
 
-    /**
-     * @param object $entity
-     *
-     * @return OperationResult
-     */
-    public function update($entity);
+    public function update(object $entity): OperationResult;
 
     /**
      * @param object[] $entities
-     *
-     * @return OperationResult
      */
-    public function updateBatch(array $entities);
+    public function updateBatch(array $entities): OperationResult;
 
     /**
-     * @param string $entityClass
-     * @param array  $params
+     * @param array<string, mixed> $params
      *
      * @return object[]
      */
-    public function query($entityClass, array $params);
+    public function query(string $entityClass, array $params): array;
 
     /**
      * @param object[] $entities
-     *
-     * @return OperationResult
      */
-    public function remove(array $entities);
+    public function remove(array $entities): OperationResult;
 
     /**
-     * @param string $entityClass
-     * @param array  $params
-     *
-     * @return int
+     * @param array<string, mixed> $params
      */
-    public function getCount($entityClass, array $params);
+    public function getCount(string $entityClass, array $params): int;
 }

@@ -10,18 +10,15 @@ namespace Modera\ServerCrudBundle\ExceptionHandling;
  */
 interface ExceptionHandlerInterface
 {
-    const OPERATION_CREATE = 'create';
-    const OPERATION_UPDATE = 'update';
-    const OPERATION_REMOVE = 'remove';
-    const OPERATION_LIST = 'list';
-    const OPERATION_GET = 'get';
-    const OPERATION_GET_NEW_RECORD_VALUES = 'get_new_record_values';
+    public const OPERATION_CREATE = 'create';
+    public const OPERATION_UPDATE = 'update';
+    public const OPERATION_REMOVE = 'remove';
+    public const OPERATION_LIST = 'list';
+    public const OPERATION_GET = 'get';
+    public const OPERATION_GET_NEW_RECORD_VALUES = 'get_new_record_values';
 
     /**
-     * @param \Exception $e
-     * @param string     $operation
-     *
-     * @return array
+     * @return array<string, mixed>
      */
-    public function createResponse(\Exception $e, $operation);
+    public function createResponse(\Exception $e, string $operation): array;
 }

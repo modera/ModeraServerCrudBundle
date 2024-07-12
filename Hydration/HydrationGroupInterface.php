@@ -8,15 +8,10 @@ namespace Modera\ServerCrudBundle\Hydration;
  */
 interface HydrationGroupInterface
 {
-    /**
-     * @return bool
-     */
-    public function isAllowed();
+    public function isAllowed(): bool;
 
     /**
-     * @param object $entity
-     *
-     * @return array
+     * @return array<string, mixed>
      */
-    public function hydrate($entity);
+    public function hydrate(object $entity): array;
 }

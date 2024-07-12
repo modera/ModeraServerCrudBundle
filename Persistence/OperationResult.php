@@ -8,36 +8,44 @@ namespace Modera\ServerCrudBundle\Persistence;
  */
 class OperationResult
 {
-    const TYPE_ENTITY_CREATED = 'entity_created';
-    const TYPE_ENTITY_UPDATED = 'entity_updated';
-    const TYPE_ENTITY_REMOVED = 'entity_removed';
-
-    private $entries = array();
+    public const TYPE_ENTITY_CREATED = 'entity_created';
+    public const TYPE_ENTITY_UPDATED = 'entity_updated';
+    public const TYPE_ENTITY_REMOVED = 'entity_removed';
 
     /**
-     * @param string $entityClass
-     * @param string $id
-     * @param string $operation
+     * @var array{
+     *     'entity_class': string,
+     *     'operation': string,
+     *     'id': int|string,
+     * }[]
      */
-    public function reportEntity($entityClass, $id, $operation)
+    private array $entries = [];
+
+    /**
+     * @param int|string $id
+     */
+    public function reportEntity(string $entityClass, $id, string $operation): void
     {
-        $this->entries[] = array(
+        $this->entries[] = [
             'entity_class' => $entityClass,
             'operation' => $operation,
             'id' => $id,
-        );
+        ];
     }
 
-    private function findEntriesByOperation($operationName)
+    /**
+     * @return array<int, array{'entity_class': string, 'id': int|string}>
+     */
+    private function findEntriesByOperation(string $operationName): array
     {
-        $result = array();
+        $result = [];
 
         foreach ($this->entries as $entry) {
-            if ($entry['operation'] == $operationName) {
-                $result[] = array(
+            if ($entry['operation'] === $operationName) {
+                $result[] = [
                     'entity_class' => $entry['entity_class'],
                     'id' => $entry['id'],
-                );
+                ];
             }
         }
 
@@ -45,55 +53,53 @@ class OperationResult
     }
 
     /**
-     * @return array[]
+     * @return array<int, array{'entity_class': string, 'id': int|string}>
      */
-    public function getCreatedEntities()
+    public function getCreatedEntities(): array
     {
         return $this->findEntriesByOperation(self::TYPE_ENTITY_CREATED);
     }
 
     /**
-     * @return array[]
+     * @return array<int, array{'entity_class': string, 'id': int|string}>
      */
-    public function getUpdatedEntities()
+    public function getUpdatedEntities(): array
     {
         return $this->findEntriesByOperation(self::TYPE_ENTITY_UPDATED);
     }
 
     /**
-     * @return array[]
+     * @return array<int, array{'entity_class': string, 'id': int|string}>
      */
-    public function getRemovedEntities()
+    public function getRemovedEntities(): array
     {
         return $this->findEntriesByOperation(self::TYPE_ENTITY_REMOVED);
     }
 
     /**
-     * @param ModelManagerInterface $modelMgr
-     *
-     * @return array
+     * @return array<string, array<string, array<int|string>>>
      */
-    public function toArray(ModelManagerInterface $modelMgr)
+    public function toArray(ModelManagerInterface $modelMgr): array
     {
-        $result = array();
+        $result = [];
 
-        $mapping = array(
-            'entity_created' => 'created_models',
-            'entity_updated' => 'updated_models',
-            'entity_removed' => 'removed_models',
-        );
+        $mapping = [
+            self::TYPE_ENTITY_CREATED => 'created_models',
+            self::TYPE_ENTITY_UPDATED => 'updated_models',
+            self::TYPE_ENTITY_REMOVED => 'removed_models',
+        ];
 
         foreach ($this->entries as $entry) {
             $key = $mapping[$entry['operation']];
 
             if (!isset($result[$key])) {
-                $result[$key] = array();
+                $result[$key] = [];
             }
 
             $modelName = $modelMgr->generateModelIdFromEntityClass($entry['entity_class']);
 
             if (!isset($result[$key][$modelName])) {
-                $result[$key][$modelName] = array();
+                $result[$key][$modelName] = [];
             }
 
             $result[$key][$modelName][] = $entry['id'];
@@ -103,20 +109,18 @@ class OperationResult
     }
 
     /**
-     * @param OperationResult $result
-     *
-     * @return OperationResult A new instance of OperationResult is returned
+     * A new instance of OperationResult is returned.
      */
-    public function merge(OperationResult $result)
+    public function merge(OperationResult $result): self
     {
         $new = new self();
-        foreach (array_merge($this->getCreatedEntities(), $result->getCreatedEntities()) as $entry) {
+        foreach (\array_merge($this->getCreatedEntities(), $result->getCreatedEntities()) as $entry) {
             $new->reportEntity($entry['entity_class'], $entry['id'], self::TYPE_ENTITY_CREATED);
         }
-        foreach (array_merge($this->getUpdatedEntities(), $result->getUpdatedEntities()) as $entry) {
+        foreach (\array_merge($this->getUpdatedEntities(), $result->getUpdatedEntities()) as $entry) {
             $new->reportEntity($entry['entity_class'], $entry['id'], self::TYPE_ENTITY_UPDATED);
         }
-        foreach (array_merge($this->getRemovedEntities(), $result->getRemovedEntities()) as $entry) {
+        foreach (\array_merge($this->getRemovedEntities(), $result->getRemovedEntities()) as $entry) {
             $new->reportEntity($entry['entity_class'], $entry['id'], self::TYPE_ENTITY_REMOVED);
         }
 

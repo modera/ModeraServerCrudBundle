@@ -14,24 +14,24 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  */
 class SecurityControllerActionsInterceptor implements ControllerActionsInterceptorInterface
 {
-    private $authorizationChecker;
+    private AuthorizationCheckerInterface $authorizationChecker;
 
-    /**
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     */
     public function __construct(AuthorizationCheckerInterface $authorizationChecker)
     {
         $this->authorizationChecker = $authorizationChecker;
     }
 
-    private function throwAccessDeniedException($role)
+    /**
+     * @param callable|string $role
+     */
+    private function throwAccessDeniedException($role): void
     {
-        $msg = is_callable($role)
+        $msg = \is_callable($role)
              ? 'You are not allowed to perform this action.'
              : "Security role '$role' is required to perform this action.";
 
         $e = new AccessDeniedHttpException($msg);
-        if (!is_callable($role)) {
+        if (!\is_callable($role)) {
             $e->setRole($role);
         }
 
@@ -39,18 +39,18 @@ class SecurityControllerActionsInterceptor implements ControllerActionsIntercept
     }
 
     /**
-     * @param string                 $actionName
-     * @param array                  $params
-     * @param AbstractCrudController $controller
+     * @param array<string, mixed> $params
      */
-    public function checkAccess($actionName, array $params, AbstractCrudController $controller)
+    public function checkAccess(string $actionName, array $params, AbstractCrudController $controller): void
     {
         $config = $controller->getPreparedConfig();
 
         if (isset($config['security'])) {
+            /** @var array<string, mixed> $security */
             $security = $config['security'];
 
             if (isset($security['role'])) {
+                /** @var string $role */
                 $role = $security['role'];
 
                 if (!$this->authorizationChecker->isGranted($role)) {
@@ -58,11 +58,12 @@ class SecurityControllerActionsInterceptor implements ControllerActionsIntercept
                 }
             }
 
-            if (isset($security['actions']) && isset($security['actions'][$actionName])) {
+            if (\is_array($security['actions'] ?? null) && isset($security['actions'][$actionName])) {
+                /** @var callable|string $role */
                 $role = $security['actions'][$actionName];
 
-                if (is_callable($role)) {
-                    if (!call_user_func($role, $this->authorizationChecker, $params, $actionName)) {
+                if (\is_callable($role)) {
+                    if (!\call_user_func($role, $this->authorizationChecker, $params, $actionName)) {
                         $this->throwAccessDeniedException($role);
                     }
                 } elseif (!$this->authorizationChecker->isGranted($role)) {
@@ -72,58 +73,37 @@ class SecurityControllerActionsInterceptor implements ControllerActionsIntercept
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function onCreate(array $params, AbstractCrudController $controller)
+    public function onCreate(array $params, AbstractCrudController $controller): void
     {
         $this->checkAccess('create', $params, $controller);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function onUpdate(array $params, AbstractCrudController $controller)
+    public function onUpdate(array $params, AbstractCrudController $controller): void
     {
         $this->checkAccess('update', $params, $controller);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function onBatchUpdate(array $params, AbstractCrudController $controller)
+    public function onBatchUpdate(array $params, AbstractCrudController $controller): void
     {
         $this->checkAccess('batchUpdate', $params, $controller);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function onGet(array $params, AbstractCrudController $controller)
+    public function onGet(array $params, AbstractCrudController $controller): void
     {
         $this->checkAccess('get', $params, $controller);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function onList(array $params, AbstractCrudController $controller)
+    public function onList(array $params, AbstractCrudController $controller): void
     {
         $this->checkAccess('list', $params, $controller);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function onRemove(array $params, AbstractCrudController $controller)
+    public function onRemove(array $params, AbstractCrudController $controller): void
     {
         $this->checkAccess('remove', $params, $controller);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function onGetNewRecordValues(array $params, AbstractCrudController $controller)
+    public function onGetNewRecordValues(array $params, AbstractCrudController $controller): void
     {
         $this->checkAccess('getNewRecordValues', $params, $controller);
     }

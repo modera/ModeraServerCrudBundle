@@ -8,22 +8,14 @@ namespace Modera\ServerCrudBundle\Intercepting;
  */
 class InvalidInterceptorException extends \RuntimeException
 {
-    /**
-     * @var object
-     */
-    private $interceptor;
+    private ?object $interceptor = null;
 
-    /**
-     * @param object $interceptor
-     *
-     * @return InvalidInterceptorException
-     */
-    public static function create($interceptor)
+    public static function create(object $interceptor): self
     {
-        $message = sprintf(
+        $message = \sprintf(
             "It is expected that all interceptors would implements %s interface but %s doesn't!",
             '\Modera\ServerCrudBundle\Intercepting\ControllerActionsInterceptorInterface',
-            get_class($interceptor)
+            \get_class($interceptor)
         );
 
         $self = new self($message);
@@ -32,18 +24,12 @@ class InvalidInterceptorException extends \RuntimeException
         return $self;
     }
 
-    /**
-     * @param object $interceptor
-     */
-    public function setInterceptor($interceptor)
+    public function setInterceptor(object $interceptor): void
     {
         $this->interceptor = $interceptor;
     }
 
-    /**
-     * @return object
-     */
-    public function getInterceptor()
+    public function getInterceptor(): ?object
     {
         return $this->interceptor;
     }

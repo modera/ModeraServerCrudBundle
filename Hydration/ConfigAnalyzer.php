@@ -11,12 +11,12 @@ namespace Modera\ServerCrudBundle\Hydration;
 class ConfigAnalyzer
 {
     /**
-     * @var array
+     * @var array<string, mixed>
      */
-    private $rawConfig;
+    private array $rawConfig;
 
     /**
-     * @param array $rawConfig
+     * @param array<string, mixed> $rawConfig
      */
     public function __construct(array $rawConfig)
     {
@@ -25,18 +25,14 @@ class ConfigAnalyzer
 
     /**
      * @throws UnknownHydrationProfileException
-     *
-     * @param string $profileName
-     *
-     * @return mixed
      */
-    public function getProfileDefinition($profileName)
+    public function getProfileDefinition(string $profileName): HydrationProfile
     {
-        $isFound = isset($this->rawConfig['profiles'][$profileName]);
-        if (!$isFound) {
-            $isFound = in_array($profileName, $this->rawConfig['profiles']);
+        $profiles = \is_array($this->rawConfig['profiles'] ?? null) ? $this->rawConfig['profiles'] : [];
 
-            if ($isFound) {
+        $isFound = isset($profiles[$profileName]);
+        if (!$isFound) {
+            if (\in_array($profileName, $profiles)) {
                 /*
                  * When hydration config looks like this:
                  *
@@ -49,7 +45,7 @@ class ConfigAnalyzer
                  *     )
                  * );
                  */
-                return HydrationProfile::create(false)->useGroups(array($profileName));
+                return HydrationProfile::create(false)->useGroups([$profileName]);
             }
         }
 
@@ -62,8 +58,9 @@ class ConfigAnalyzer
             throw $e;
         }
 
-        $profile = $this->rawConfig['profiles'][$profileName];
-        if (is_array($profile)) {
+        /** @var string[]|HydrationProfile $profile */
+        $profile = $profiles[$profileName];
+        if (\is_array($profile)) {
             /*
              * Will be used when hydration config looks akin to the following:
              *
@@ -83,9 +80,14 @@ class ConfigAnalyzer
         return $profile;
     }
 
-    public function getGroupDefinition($groupName)
+    /**
+     * @return callable|string[]|array<string, string>
+     */
+    public function getGroupDefinition(string $groupName)
     {
-        if (!isset($this->rawConfig['groups'][$groupName])) {
+        $groups = \is_array($this->rawConfig['groups']) ? $this->rawConfig['groups'] : [];
+
+        if (!isset($groups[$groupName])) {
             $e = new UnknownHydrationGroupException(
                 "Hydration group '$groupName' is not found."
             );
@@ -94,6 +96,6 @@ class ConfigAnalyzer
             throw $e;
         }
 
-        return $this->rawConfig['groups'][$groupName];
+        return $groups[$groupName];
     }
 }

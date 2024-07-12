@@ -45,9 +45,9 @@ class DefaultEntityValidatorTest extends FunctionalTestCase
     private $validator;
 
     // override
-    public function doSetUp()
+    public function doSetUp(): void
     {
-        $this->validator = self::$container->get('modera_server_crud.validation.default_entity_validator');
+        $this->validator = self::getContainer()->get('modera_server_crud.validation.default_entity_validator');
     }
 
     public function testIfServiceExists()

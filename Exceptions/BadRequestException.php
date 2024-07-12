@@ -11,37 +11,35 @@ namespace Modera\ServerCrudBundle\Exceptions;
  */
 class BadRequestException extends \RuntimeException
 {
-    private $params = array();
-    private $path;
+    /**
+     * @var array<string, mixed>
+     */
+    private array $params = [];
+
+    private string $path = '';
 
     /**
-     * @param array $params
+     * @param array<string, mixed> $params
      */
-    public function setParams($params)
+    public function setParams(array $params): void
     {
         $this->params = $params;
     }
 
     /**
-     * @return array
+     * @return array<string, mixed>
      */
-    public function getParams()
+    public function getParams(): array
     {
         return $this->params;
     }
 
-    /**
-     * @param string $path
-     */
-    public function setPath($path)
+    public function setPath(string $path): void
     {
         $this->path = $path;
     }
 
-    /**
-     * @return string
-     */
-    public function getPath()
+    public function getPath(): string
     {
         return $this->path;
     }

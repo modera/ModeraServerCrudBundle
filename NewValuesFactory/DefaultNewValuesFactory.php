@@ -15,33 +15,34 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class DefaultNewValuesFactory implements NewValuesFactoryInterface
 {
-    private $container;
+    private ContainerInterface $container;
 
-    /**
-     * @param ContainerInterface $container
-     */
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getValues(array $params, array $config)
+    public function getValues(array $params, array $config): array
     {
+        /** @var string $entityClass */
         $entityClass = $config['entity'];
 
         $methodName = 'formatNewValues';
 
-        if (method_exists($entityClass, $methodName)) {
+        if (\method_exists($entityClass, $methodName)) {
+            /** @var class-string $entityClass */
+            $entityClass = $entityClass;
             $reflClass = new \ReflectionClass($entityClass);
             $reflMethod = $reflClass->getMethod($methodName);
             if ($reflMethod->isStatic()) {
-                return $reflMethod->invokeArgs(null, array($params, $config, $this->container));
+                $result = $reflMethod->invokeArgs(null, [$params, $config, $this->container]);
+                /** @var array<string, mixed> $result */
+                if (\is_array($result)) {
+                    return $result;
+                }
             }
         }
 
-        return array();
+        return [];
     }
 }

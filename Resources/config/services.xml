@@ -22,7 +22,7 @@
                  class="Modera\ServerCrudBundle\DataMapping\DefaultDataMapper"
                  public="true">
 
-            <argument type="service" id="sli.extjsintegration.entity_data_mapper" />
+            <argument type="service" id="modera_server_crud.entity_data_mapper" />
             <argument type="service" id="doctrine.orm.entity_manager" />
         </service>
 
@@ -31,7 +31,7 @@
                  public="true">
 
             <argument type="service" id="doctrine" />
-            <argument type="service" id="sli.extjsintegration.extjs_query_builder" />
+            <argument type="service" id="modera_server_crud.array_query_builder" />
         </service>
 
         <service id="modera_server_crud.persistence.model_manager"
@@ -72,5 +72,38 @@
 
             <tag name="modera_server_crud.intercepting.cai_provider" />
         </service>
+
+        <service id="Modera\ServerCrudBundle\DataMapping\MethodInvocation\AnnotationMethodInvocationParametersProvider">
+            <argument type="service" id="service_container" />
+        </service>
+
+        <service id="Modera\ServerCrudBundle\DataMapping\EntityDataMapperService">
+            <argument type="service" id="doctrine" />
+            <argument type="service" id="security.token_storage" />
+            <argument type="service" id="Modera\ServerCrudBundle\Util\JavaBeansObjectFieldsManager" />
+            <argument type="service" id="Modera\ServerCrudBundle\DataMapping\MethodInvocation\AnnotationMethodInvocationParametersProvider" />
+            <argument type="service" id="modera_server_crud.complex_field_value_converters_provider" />
+        </service>
+
+        <service id="modera_server_crud.entity_data_mapper"
+                 alias="Modera\ServerCrudBundle\DataMapping\EntityDataMapperService"
+                 public="true" />
+
+        <service id="Modera\ServerCrudBundle\QueryBuilder\ResolvingAssociatedModelSortingField\AnnotationSortingFieldResolver">
+            <argument type="service" id="doctrine" />
+        </service>
+
+        <service id="Modera\ServerCrudBundle\QueryBuilder\ArrayQueryBuilder">
+            <argument type="service" id="doctrine" />
+            <argument type="service" id="Modera\ServerCrudBundle\DataMapping\EntityDataMapperService" />
+            <argument type="service" id="Modera\ServerCrudBundle\QueryBuilder\ResolvingAssociatedModelSortingField\AnnotationSortingFieldResolver" />
+        </service>
+
+        <service id="modera_server_crud.array_query_builder"
+                 alias="Modera\ServerCrudBundle\QueryBuilder\ArrayQueryBuilder"
+                 public="true" />
+
+        <service id="Modera\ServerCrudBundle\Util\JavaBeansObjectFieldsManager" />
+
     </services>
 </container>

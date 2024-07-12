@@ -8,23 +8,14 @@ namespace Modera\ServerCrudBundle\Hydration;
  */
 class UnknownHydrationProfileException extends \RuntimeException
 {
-    /**
-     * @var string
-     */
-    private $profileName;
+    private ?string $profileName = null;
 
-    /**
-     * @param string $profileName
-     */
-    public function setProfileName($profileName)
+    public function setProfileName(string $profileName): void
     {
         $this->profileName = $profileName;
     }
 
-    /**
-     * @return string
-     */
-    public function getProfileName()
+    public function getProfileName(): ?string
     {
         return $this->profileName;
     }

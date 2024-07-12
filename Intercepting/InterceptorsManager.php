@@ -2,8 +2,8 @@
 
 namespace Modera\ServerCrudBundle\Intercepting;
 
+use Modera\ExpanderBundle\Ext\ContributorInterface;
 use Modera\ServerCrudBundle\Controller\AbstractCrudController;
-use Sli\ExpanderBundle\Ext\ContributorInterface;
 
 /**
  * Handles interceptors invoking process.
@@ -13,41 +13,31 @@ use Sli\ExpanderBundle\Ext\ContributorInterface;
  */
 class InterceptorsManager
 {
-    private $interceptorsProvider;
+    private ContributorInterface $interceptorsProvider;
 
-    /**
-     * @param ContributorInterface $interceptorsProvider
-     */
     public function __construct(ContributorInterface $interceptorsProvider)
     {
         $this->interceptorsProvider = $interceptorsProvider;
     }
 
     /**
-     * @param string                 $actionName
-     * @param array                  $params
-     * @param AbstractCrudController $controller
+     * @param array<string, mixed> $params
      *
      * @throws InvalidInterceptorException
      * @throws \InvalidArgumentException   When bad $actionName is given
      */
-    public function intercept($actionName, array $params, AbstractCrudController $controller)
+    public function intercept(string $actionName, array $params, AbstractCrudController $controller): void
     {
-        if (!in_array($actionName, array('create', 'get', 'list', 'remove', 'update', 'getNewRecordValues', 'batchUpdate'))) {
-            throw new \InvalidArgumentException(sprintf(
-                'Action name can only be either of these: create, get, list or remove, update, getNewRecordValues, but "%s" given',
-                $actionName
-            ));
+        if (!\in_array($actionName, ['create', 'get', 'list', 'remove', 'update', 'getNewRecordValues', 'batchUpdate'])) {
+            throw new \InvalidArgumentException(\sprintf('Action name can only be either of these: create, get, list or remove, update, getNewRecordValues, but "%s" given', $actionName));
         }
 
         foreach ($this->interceptorsProvider->getItems() as $interceptor) {
+            /** @var object $interceptor */
             if (!($interceptor instanceof ControllerActionsInterceptorInterface)) {
                 throw InvalidInterceptorException::create($interceptor);
             }
-
-            /* @var ControllerActionsInterceptorInterface $interceptor */
-
-            $interceptor->{'on'.ucfirst($actionName)}($params, $controller);
+            $interceptor->{'on'.\ucfirst($actionName)}($params, $controller);
         }
     }
 }

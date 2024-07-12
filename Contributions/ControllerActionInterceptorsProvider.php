@@ -2,8 +2,9 @@
 
 namespace Modera\ServerCrudBundle\Contributions;
 
+use Modera\ExpanderBundle\Ext\ContributorInterface;
+use Modera\ServerCrudBundle\Intercepting\ControllerActionsInterceptorInterface;
 use Modera\ServerCrudBundle\Security\SecurityControllerActionsInterceptor;
-use Sli\ExpanderBundle\Ext\ContributorInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
@@ -13,26 +14,26 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  */
 class ControllerActionInterceptorsProvider implements ContributorInterface
 {
+    private AuthorizationCheckerInterface $authorizationChecker;
+
     /**
-     * @var AuthorizationCheckerInterface
+     * @var ?ControllerActionsInterceptorInterface[]
      */
-    private $authorizationChecker;
-    private $items;
+    private ?array $items = null;
 
     public function __construct(ContainerInterface $container)
     {
-        $this->authorizationChecker = $container->get('security.authorization_checker');
+        /** @var AuthorizationCheckerInterface $authorizationChecker */
+        $authorizationChecker = $container->get('security.authorization_checker');
+        $this->authorizationChecker = $authorizationChecker;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getItems()
+    public function getItems(): array
     {
         if (!$this->items) {
-            $this->items = array(
+            $this->items = [
                 new SecurityControllerActionsInterceptor($this->authorizationChecker),
-            );
+            ];
         }
 
         return $this->items;

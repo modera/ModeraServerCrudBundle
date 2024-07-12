@@ -18,7 +18,7 @@ class BypassExceptionHandlerTest extends \PHPUnit\Framework\TestCase
 
         $thrownException = null;
         try {
-            $bypassHandler->createResponse($e, null);
+            $bypassHandler->createResponse($e, 'test');
         } catch (\Exception $e) {
             $thrownException = $e;
         }

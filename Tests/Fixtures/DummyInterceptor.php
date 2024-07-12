@@ -16,7 +16,7 @@ class DummyInterceptor implements ControllerActionsInterceptorInterface
         'getNewRecordValues' => array(),
     );
 
-    public function onCreate(array $params, AbstractCrudController $controller)
+    public function onCreate(array $params, AbstractCrudController $controller): void
     {
         $this->invocations['create'][] = array($params, $controller);
     }
@@ -24,7 +24,7 @@ class DummyInterceptor implements ControllerActionsInterceptorInterface
     /**
      * {@inheritdoc}
      */
-    public function onUpdate(array $params, AbstractCrudController $controller)
+    public function onUpdate(array $params, AbstractCrudController $controller): void
     {
         $this->invocations['update'][] = array($params, $controller);
     }
@@ -32,27 +32,27 @@ class DummyInterceptor implements ControllerActionsInterceptorInterface
     /**
      * {@inheritdoc}
      */
-    public function onBatchUpdate(array $params, AbstractCrudController $controller)
+    public function onBatchUpdate(array $params, AbstractCrudController $controller): void
     {
         $this->invocations['batchUpdate'][] = array($params, $controller);
     }
 
-    public function onGet(array $params, AbstractCrudController $controller)
+    public function onGet(array $params, AbstractCrudController $controller): void
     {
         $this->invocations['get'][] = array($params, $controller);
     }
 
-    public function onList(array $params, AbstractCrudController $controller)
+    public function onList(array $params, AbstractCrudController $controller): void
     {
         $this->invocations['list'][] = array($params, $controller);
     }
 
-    public function onRemove(array $params, AbstractCrudController $controller)
+    public function onRemove(array $params, AbstractCrudController $controller): void
     {
         $this->invocations['remove'][] = array($params, $controller);
     }
 
-    public function onGetNewRecordValues(array $params, AbstractCrudController $controller)
+    public function onGetNewRecordValues(array $params, AbstractCrudController $controller): void
     {
         $this->invocations['getNewRecordValues'][] = array($params, $controller);
     }

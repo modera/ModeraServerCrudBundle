@@ -78,7 +78,7 @@ The main thing you need to know that every response that comes from server side 
 property - `success`. This property can be used on client side to understand if a request sent to server side controller
 was processed properly or something went wrong. When exception is thrown during processing your request an implementation
 of \Modera\ServerCrudBundle\ExceptionHandling\ExceptionHandlerInterface will be used to convert the thrown exception to
-a data structure that will be sent to client-side. By default \Modera\ServerCrudBundle\ExceptionHandling\BypassExceptionHandler
+a data structure that will be sent to client-side. By default, \Modera\ServerCrudBundle\ExceptionHandling\BypassExceptionHandler
 is going to be used.
 
 ## Hydrating data
@@ -110,7 +110,7 @@ example, a User object configured this way:
     $u->company = $company;
     $u->creditCards = array($cc1, $cc2);
 
-Can be hydrated in many different ways:
+Can be hydrated in many ways:
 
     array(
         'id' => 5,
@@ -167,8 +167,8 @@ If you want to use example above in your code you will need to import \Modera\Se
 before you can use short class name "HydrationProfile". As you can see when we create an instance of HydrationProfile using
 static factory method `create` we pass `FALSE` value which indicates that we don't want to use grouping. In our case
 we have a very simple data structure, but real applications most of the time will impose more requirements - for example,
-say that we have a a user profile editing window and when the window is shown we also want to show user's credit cards.
-Let's update our `hydration` configuration property so it would look like this:
+say that we have a user profile editing window and when the window is shown we also want to show user's credit cards.
+Let's update our `hydration` configuration property, so it would look like this:
 
     // override
     function getConfig() {
@@ -208,8 +208,8 @@ Let's update our `hydration` configuration property so it would look like this:
         );
     }
 
-As you can see we have updated our `form` hydration profile so it would use grouping - we passed `TRUE` to
-HydrationProfile::create method and also we added `credit-cards` to `useGroups` method. Now if you query server-side
+As you can see we have updated our `form` hydration profile, so it would use grouping - we passed `TRUE` to
+HydrationProfile::create method, and also we added `credit-cards` to `useGroups` method. Now if you query server-side
 and specify hydration profile `form`:
 
     $result = $c->getAction(array(
@@ -268,7 +268,7 @@ So far we have seen how to define your hydration groups using two approaches:
 * Using array with expressions
 * Anonymous function
 
-Most of the time these two approaches will suffice but sometime you mays want to create a reusable hydration group
+Most of the time these two approaches will suffice but sometimes you mays want to create a reusable hydration group
 that you probably will want to re-use in several controllers. Luckily, hydration package can be easily extended.
 Essentially when you define your hydration group you can pass anything that PHP can treat as callable - anonymous function,
 array, a class which implements special \__invoke method. This is how reusable credit card hydrator could look like:
@@ -322,7 +322,7 @@ case when defining profiles you may not use HydrationProfile and instead just sp
 
 When hydration profiles are defined using this syntax then no result grouping will be used.
 
-Also, you when defining composite hydration profiles you may using a short-hand syntax without using HydrationProfile:
+Also, you when defining composite hydration profiles you may use a shorthand syntax without using HydrationProfile:
 
     // override
     function getConfig() {
@@ -351,8 +351,7 @@ Also, you when defining composite hydration profiles you may using a short-hand 
         );
     }
 
-In this case grouping will be used and invocation results of groups `form` and `credit-cards` will grouped under
-under group names.
+In this case grouping will be used and invocation results of groups `form` and `credit-cards` will be grouped under group names.
 
 ## Querying data
 
@@ -385,18 +384,11 @@ And this is how we can use `listAction($params)`:
         )
     ));
 
-Internally to analyze `filter` property ModeraServerCrudBundle and build DQL the bundle relies on
-[SliExtJsIntegrationBundle](https://github.com/sergeil/SliExtJsIntegrationBundle) bundle. Please consult to its
-documentation to learn how to to structure your queries. It it is worth saying that without exaggerating that we
-SliExtJsIntegrationBundle is used be able to build up to 90% of your queries right on client-side without writing DQL
-manually on server-side. The bundle has support for working and filtering by associations, applying database functions
-and using grouping, pagination amongst others.
-
 ## Creating new records and updating records
 
 When you send a request to update a record or create a new one all your record data must be consolidated under associative
 property `record`. For example, to create a new record you can invoke `createAction($params)` method by passing parameters
-similar to these ones:
+similar to these:
 
     $result = $c->createAction(array(
         'record' => array(
@@ -448,7 +440,7 @@ will be discussed later.
 Quite often when a new record is being created or existing one is getting updated some validation errors may occur.
 Protocol distinguishes two types of validation errors: general errors and fields associated errors. To
 categorize validation errors we can use an example. For example, if user doesn't have required permissions to create a new
-record, then this validation error will rather fall to "general errors' category but if for a field email user entered
+record, then this validation error will rather fall to 'general errors' category but if for a field email user entered
 a non-valid email address then this validation error will rather belong to "fields associated errors" group. Server
 responses for these types of errors will look similar to examples shown below.
 
@@ -500,7 +492,7 @@ values returned by this method will be sent back to client side. The method will
 * array $config -- Configuration parameters of the crud ( value returned by AbstractCrudController::getPreparedConfig() )
 * ContainerInterface $container -- Instance of Symfony dependency injection container
 
-If we would want that whenever a new user is created from client-side to select some company for it, then we could
+If we want that whenever a new user is created from client-side to select some company for it, then we could
 have updated our User entity to look like this:
 
     class User
@@ -513,7 +505,7 @@ have updated our User entity to look like this:
 
         public $creditCards = array();
 
-        static public function formatNewValues()
+        public static function formatNewValues()
         {
             return array(
                 'company' => 123
@@ -524,7 +516,7 @@ have updated our User entity to look like this:
 # Batch updates
 
 When you have a lot of data eventually you may want to add a support of batch editing, that is - let your users
-to modify several records by sending just one request to server. Luckily, AbstractCrudController class supports
+modify several records by sending just one request to server. Luckily, AbstractCrudController class supports
 this features of the box. When it comes to batch records update you have two options how you structure a request:
 
  * you specify a query and some data that you want to apply to all records that will be returned by given query
@@ -571,7 +563,7 @@ like this:
 
 When this query is executed AbstractCrudController will fetch one by one two records and update them. It is
 very important not to forget to specify primary key values for your records so that server-side logic could use
-them to uniqually identify your records. In this example we use conventional automatically managed 'id' primary key field
+them to uniquely identify your records. In this example we use conventional automatically managed 'id' primary key field
 but AbstractCrudController doesn't limit you to that, it depends on an implementation of PersistenceHandlerInterface which
 is configured to be used by AbstractCrudController, default implementation DoctrineRegistryPersistenceHandler is able
 to deal with composite primary keys out of the box.
@@ -600,12 +592,12 @@ an error occurs on server-side response will have this structure:
 In this example we showed you how a response would have looked like if there were a validation error during batch update.
 As you can see, every error entry consists of two keys - `id` and `errors`. `id` element will contain an ID
 that a record can be identified with, the reason why we need to use nested structure here is because of possible
-usage of composite primary keys. Also it is important to mention is that if one of records didn't pass a validation
+usage of composite primary keys. Also, it is important to mention is that if one of records didn't pass a validation
 none of the records would be updated.
 
 # Advanced usage
 
-AbstractCrudController class uses many different services to process your requests and if it is needed you can easily
+AbstractCrudController class uses many services to process your requests and if it is needed you can easily
 write your own implementations to change its logic - for example, you may want to switch from Doctrine based persistence
 layer and instead use a remote data source like web-services - from a day one the architecture has been designed to be
 extensible and susceptible for modifications. In this section we are going to shed some light on base interfaces that
@@ -654,7 +646,7 @@ Before something can be persisted to database you need to convert a data-structu
 that you can pass to persistence layer. When you are working with ORM ( because you are using Symfony we believe you are
 using ORM ) before you can map data onto entity you need to create its instance of configured with `getConfig` method
 configuration property `entity`. AbstractCrudController relies on implementation of
-\Modera\ServerCrudBundle\EntityFactory\EntityFactoryInterface to have new entities created. By default a very simple
+\Modera\ServerCrudBundle\EntityFactory\EntityFactoryInterface to have new entities created. By default, a very simple
 implementation is used which will create instances using class constructors -
 \Modera\ServerCrudBundle\EntityFactory\DefaultEntityFactory. Sometimes you may want to add support for class factory methods,
 for this to happen you can implement EntityFactoryInterface and register your implementation using `entity_factory`
@@ -811,7 +803,7 @@ persisted we want to make sure that provided address really exists, then we coul
     }
 
 First argument passed to `validate` method is instance of \Modera\ServerCrudBundle\Validation\ValidationResult and
-must be used to report validation errors - you can report both field related errors as well as general ones.
+must be used to report validation errors - you can report both field related errors and general ones.
 
 ## Actions intercepting
 
@@ -822,7 +814,7 @@ code before any of web-exposed AbstractCrud controller actions gets executed you
 * Create an implementation of \Modera\ServerCrudBundle\Intercepting\ControllerActionsInterceptorInterface interface
 or subclass \Modera\ServerCrudBundle\Intercepting\ControllerActionsInterceptor if you don't want to write boilerplate
 code.
-* Register an instance of \Sli\ExpanderBundle\Ext\ContributorInterface which would return an instance of your interceptor
+* Register an instance of \Modera\ExpanderBundle\Ext\ContributorInterface which would return an instance of your interceptor
 in a dependency injection container and tag it with "modera_server_crud.intercepting.cai_providers".
 
 ## Security
@@ -848,7 +840,7 @@ configuration key when overriding `AbstractCrudController::getConfig` method:
     }
 
 When `security/role` configuration property is provided then user must have this role in order to access all controller
-actions. If you need to add more fine-grained security role requirements then you need to use `security/actions` property,
+actions. If you need to add more fine-grained security role requirements than you need to use `security/actions` property,
 each key of this array corresponds to a controller actions name without "Action" suffix and its value is a security
 role name that user must have in order to invoke this action or a PHP callable that must be invoked to do security
 checks.

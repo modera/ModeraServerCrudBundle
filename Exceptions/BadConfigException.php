@@ -10,53 +10,44 @@ namespace Modera\ServerCrudBundle\Exceptions;
  */
 class BadConfigException extends \RuntimeException
 {
-    /**
-     * @var string
-     */
-    protected $serviceType;
+    protected ?string $serviceType = null;
 
     /**
-     * @var array
+     * @var array<string, mixed>
      */
-    protected $config;
+    protected array $config = [];
 
-    /**
-     * @return string
-     */
-    public function getServiceType()
+    public function getServiceType(): ?string
     {
         return $this->serviceType;
     }
 
     /**
-     * @return array
+     * @return array<string, mixed>
      */
-    public function getConfig()
+    public function getConfig(): array
     {
         return $this->config;
     }
 
     /**
-     * @param $serviceType
-     * @param array      $config
-     * @param \Exception $exception
-     *
-     * @return BadConfigException
+     * @param array<string, mixed> $config
      */
-    public static function create($serviceType, array $config, \Exception $exception)
+    public static function create(string $serviceType, array $config, \Exception $exception): self
     {
         $parentMessage = $exception->getMessage();
 
-        if (array_key_exists($serviceType, $config)) {
+        if (\array_key_exists($serviceType, $config)) {
+            /** @var string $serviceId */
             $serviceId = $config[$serviceType];
-            $message = sprintf(
+            $message = \sprintf(
                 'An error occurred while getting a service for configuration property "%s" using DI service with ID "%s" - %s',
                 $serviceType,
                 $serviceId,
                 $parentMessage
             );
         } else {
-            $message = sprintf(
+            $message = \sprintf(
                 'An error occurred while getting a configuration property "%s". No such property exists in config.',
                 $serviceType
             );
@@ -66,7 +57,6 @@ class BadConfigException extends \RuntimeException
 
         $generatedException->serviceType = $serviceType;
         $generatedException->config = $config;
-        $generatedException->exception = $exception;
 
         return $generatedException;
     }

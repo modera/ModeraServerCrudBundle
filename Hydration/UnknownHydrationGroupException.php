@@ -8,23 +8,14 @@ namespace Modera\ServerCrudBundle\Hydration;
  */
 class UnknownHydrationGroupException extends \RuntimeException
 {
-    /**
-     * @var string
-     */
-    private $groupName;
+    private ?string $groupName = null;
 
-    /**
-     * @param string $groupName
-     */
-    public function setGroupName($groupName)
+    public function setGroupName(string $groupName): void
     {
         $this->groupName = $groupName;
     }
 
-    /**
-     * @return string
-     */
-    public function getGroupName()
+    public function getGroupName(): ?string
     {
         return $this->groupName;
     }

@@ -8,37 +8,24 @@ namespace Modera\ServerCrudBundle\Hydration;
  */
 class HydrationProfile implements HydrationProfileInterface
 {
-    /**
-     * @var bool
-     */
-    private $isGroupingNeeded;
+    private bool $isGroupingNeeded = true;
 
     /**
-     * @var array
+     * @var string[]
      */
-    private $groups = array();
-
-    /**
-     * @var mixed[]
-     */
-    private $extensionPoint;
+    private array $groups = [];
 
     /**
      * @return string[]
      */
-    public function getGroups()
+    public function getGroups(): array
     {
         return $this->groups;
     }
 
     // fluent interface:
 
-    /**
-     * @param bool $isGroupingNeeded
-     *
-     * @return HydrationProfile
-     */
-    public static function create($isGroupingNeeded = true)
+    public static function create(bool $isGroupingNeeded = true): self
     {
         $me = new self();
         $me->useGrouping($isGroupingNeeded);
@@ -46,20 +33,15 @@ class HydrationProfile implements HydrationProfileInterface
         return $me;
     }
 
-    /**
-     * @return bool
-     */
-    public function isGroupingNeeded()
+    public function isGroupingNeeded(): bool
     {
         return $this->isGroupingNeeded;
     }
 
     /**
-     * @param mixed[] $groups
-     *
-     * @return HydrationProfile
+     * @param string[] $groups
      */
-    public function useGroups(array $groups)
+    public function useGroups(array $groups): self
     {
         $this->groups = $groups;
 
@@ -67,32 +49,12 @@ class HydrationProfile implements HydrationProfileInterface
     }
 
     /**
-     * @param string $extensionPoint
-     *
-     * @return HydrationProfile
+     * If TRUE then serialized data will be grouped under "profile-names". See Resources/doc/index.md for more details.
      */
-    public function useExtensionPoint($extensionPoint)
+    public function useGrouping(bool $isGroupingNeeded): self
     {
-        $this->extensionPoint = $extensionPoint;
-
-        return $this;
-    }
-
-    /**
-     * If TRUe then serialized data will be grouped under "profile-names". See Resources/doc/index.md for more
-     * details.
-     *
-     * @param bool $isGroupingNeeded
-     *
-     * @return HydrationProfile
-     */
-    public function useGrouping($isGroupingNeeded)
-    {
-        if (!in_array($isGroupingNeeded, array(true, false), true)) {
-            throw new \InvalidArgumentException(
-                'Only TRUE or FALSE can be used as a parameter for %s::useGrouping($isGroupingNeeded) method',
-                get_class($this)
-            );
+        if (!\in_array($isGroupingNeeded, [true, false], true)) {
+            throw new \InvalidArgumentException(\sprintf('Only TRUE or FALSE can be used as a parameter for %s::useGrouping($isGroupingNeeded) method', \get_class($this)));
         }
 
         $this->isGroupingNeeded = $isGroupingNeeded;

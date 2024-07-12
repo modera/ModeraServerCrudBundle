@@ -8,59 +8,53 @@ namespace Modera\ServerCrudBundle\Persistence;
  */
 class DefaultModelManager implements ModelManagerInterface
 {
-    private function underscorizeWord($word)
+    private function underscorizeWord(string $word): string
     {
-        $result = strtolower($word[0]);
-        for ($i = 1; $i < strlen($word); ++$i) {
+        $result = \strtolower($word[0]);
+        for ($i = 1; $i < \strlen($word); ++$i) {
             $char = $word[$i];
 
-            if (strtoupper($char) === $char) {
+            if (\strtoupper($char) === $char) {
                 $result .= '_';
             }
 
-            $result .= strtolower($char);
+            $result .= \strtolower($char);
         }
 
         return $result;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function generateModelIdFromEntityClass($entityClass)
+    public function generateModelIdFromEntityClass(string $entityClass): string
     {
-        $result = array();
+        $result = [];
 
-        foreach (explode('\\', $entityClass) as $segment) {
-            if ('Entity' == $segment) {
+        foreach (\explode('\\', $entityClass) as $segment) {
+            if ('Entity' === $segment) {
                 continue;
             }
 
             $result[] = $this->underscorizeWord($segment);
         }
 
-        return implode('.', $result);
+        return \implode('.', $result);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function generateEntityClassFromModelId($modelId)
+    public function generateEntityClassFromModelId(string $modelId): string
     {
-        $result = array();
+        $result = [];
 
         // modera.admin_generator.foo => Modera\AdminGenerator\Entity\Foo
-        foreach (explode('.', $modelId) as $i => $segment) {
-            if (2 == $i) {
+        foreach (\explode('.', $modelId) as $i => $segment) {
+            if (2 === $i) {
                 $result[] = 'Entity';
             }
 
-            $explodedSegment = explode('_', $segment);
-            $explodedSegment = array_map(function ($v) {
-                return ucfirst($v);
+            $explodedSegment = \explode('_', $segment);
+            $explodedSegment = \array_map(function ($v) {
+                return \ucfirst($v);
             }, $explodedSegment);
 
-            $segment = implode('', $explodedSegment);
+            $segment = \implode('', $explodedSegment);
             if (1 == $i) {
                 $segment .= 'Bundle';
             }
@@ -68,6 +62,6 @@ class DefaultModelManager implements ModelManagerInterface
             $result[] = $segment;
         }
 
-        return implode('\\', $result);
+        return \implode('\\', $result);
     }
 }

@@ -10,19 +10,23 @@ namespace Modera\ServerCrudBundle\Validation;
  */
 class ValidationResult
 {
-    private $fieldErrors = array();
-    private $generalErrors = array();
+    /**
+     * @var array<string, string[]>
+     */
+    private $fieldErrors = [];
+
+    /**
+     * @var string[]
+     */
+    private $generalErrors = [];
 
     /**
      * Adds a field related error.
-     *
-     * @param string $fieldName
-     * @param string $error
      */
-    public function addFieldError($fieldName, $error)
+    public function addFieldError(string $fieldName, string $error): void
     {
         if (!isset($this->fieldErrors[$fieldName])) {
-            $this->fieldErrors[$fieldName] = array();
+            $this->fieldErrors[$fieldName] = [];
         }
 
         $this->fieldErrors[$fieldName][] = $error;
@@ -30,54 +34,50 @@ class ValidationResult
 
     /**
      * You can use this method to report some general error ( error that is associated with no fields or associated
-     * to several ones at the same time and you don't want to show same error message for several fields ).
-     *
-     * @param string $error
+     * to several ones at the same time, and you don't want to show same error message for several fields ).
      */
-    public function addGeneralError($error)
+    public function addGeneralError(string $error): void
     {
         $this->generalErrors[] = $error;
     }
 
     /**
-     * @param string $fieldName
-     *
      * @return string[]
      */
-    public function getFieldErrors($fieldName)
+    public function getFieldErrors(string $fieldName): array
     {
-        return isset($this->fieldErrors[$fieldName]) ? $this->fieldErrors[$fieldName] : array();
+        return $this->fieldErrors[$fieldName] ?? [];
     }
 
     /**
      * @return string[]
      */
-    public function getGeneralErrors()
+    public function getGeneralErrors(): array
     {
         return $this->generalErrors;
     }
 
     /**
-     * @return array
+     * @return array{
+     *     'field_errors'?: array<string, string[]>,
+     *     'general_errors'?: string[],
+     * }
      */
-    public function toArray()
+    public function toArray(): array
     {
-        $result = array();
+        $result = [];
 
-        if (count($this->fieldErrors)) {
+        if (\count($this->fieldErrors)) {
             $result['field_errors'] = $this->fieldErrors;
         }
-        if (count($this->generalErrors)) {
+        if (\count($this->generalErrors)) {
             $result['general_errors'] = $this->generalErrors;
         }
 
         return $result;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasErrors()
+    public function hasErrors(): bool
     {
         $array = $this->toArray();
 

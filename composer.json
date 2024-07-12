@@ -18,9 +18,8 @@
         "doctrine/doctrine-bundle": "^2.0",
         "symfony/security-bundle": "^5.4|^6.0",
         "symfony/framework-bundle": "^5.4|^6.0",
-        "modera/foundation-bundle": "^5.0",
-        "sergeil/extjsintegration-bundle": "^3.0",
-        "sergeil/expander-bundle": "^1.2"
+        "modera/expander-bundle": "^5.0",
+        "modera/foundation-bundle": "^5.0"
     },
     "require-dev": {
         "phake/phake": "^4.0",

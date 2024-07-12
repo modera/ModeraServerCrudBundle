@@ -2,8 +2,7 @@
 
 namespace Modera\ServerCrudBundle\DataMapping;
 
-use Doctrine\ORM\EntityManager;
-use Sli\ExtJsIntegrationBundle\DataMapping\EntityDataMapperService;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * @author    Sergei Lissovski <sergei.lissovski@modera.org>
@@ -11,26 +10,21 @@ use Sli\ExtJsIntegrationBundle\DataMapping\EntityDataMapperService;
  */
 class DefaultDataMapper implements DataMapperInterface
 {
-    private $mapper;
-    private $em;
+    private EntityDataMapperService $mapper;
+    private EntityManagerInterface $em;
 
-    /**
-     * @param EntityDataMapperService $mapper
-     * @param EntityManager           $em
-     */
-    public function __construct(EntityDataMapperService $mapper, EntityManager $em)
+    public function __construct(EntityDataMapperService $mapper, EntityManagerInterface $em)
     {
         $this->mapper = $mapper;
         $this->em = $em;
     }
 
     /**
-     * @param string $entityClass
-     *
      * @return string[]
      */
-    protected function getAllowedFields($entityClass)
+    protected function getAllowedFields(string $entityClass)
     {
+        /** @var class-string $entityClass */
         $metadata = $this->em->getClassMetadata($entityClass);
 
         $fields = $metadata->getFieldNames();
@@ -41,12 +35,9 @@ class DefaultDataMapper implements DataMapperInterface
         return $fields;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function mapData(array $params, $entity)
+    public function mapData(array $params, object $entity): void
     {
-        $allowedFields = $this->getAllowedFields(get_class($entity));
+        $allowedFields = $this->getAllowedFields(\get_class($entity));
 
         $this->mapper->mapEntity($entity, $params, $allowedFields);
     }

@@ -8,7 +8,7 @@ use Modera\ServerCrudBundle\Hydration\UnknownHydrationGroupException;
 use Modera\ServerCrudBundle\Hydration\UnknownHydrationProfileException;
 
 /**
- * @author Sergei Lissovski <sergei.lissovski@gmail.com>
+ * @author Sergei Lissovski <sergei.lissovski@modera.org>
  */
 class ConfigAnalyzerTest extends \PHPUnit\Framework\TestCase
 {

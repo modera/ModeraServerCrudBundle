@@ -14,20 +14,12 @@ interface ModelManagerInterface
     /**
      * For fully qualified entity class name $entityClass must generate a string representation that later
      * can be used on client-side.
-     *
-     * @param string $entityClass
-     *
-     * @return string
      */
-    public function generateModelIdFromEntityClass($entityClass);
+    public function generateModelIdFromEntityClass(string $entityClass): string;
 
     /**
      * For a client-side version of model name $modelId must resolve server-side fully qualified entity class
      * name.
-     *
-     * @param string $modelId
-     *
-     * @return string
      */
-    public function generateEntityClassFromModelId($modelId);
+    public function generateEntityClassFromModelId(string $modelId): string;
 }

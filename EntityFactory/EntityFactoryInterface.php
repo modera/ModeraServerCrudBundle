@@ -12,10 +12,8 @@ namespace Modera\ServerCrudBundle\EntityFactory;
 interface EntityFactoryInterface
 {
     /**
-     * @param array $params
-     * @param array $config
-     *
-     * @return object
+     * @param array<string, mixed> $params
+     * @param array<string, mixed> $config
      */
-    public function create(array $params, array $config);
+    public function create(array $params, array $config): object;
 }

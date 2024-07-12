@@ -2,6 +2,7 @@
 
 namespace Modera\ServerCrudBundle\Tests\Unit\Controller;
 
+use Modera\ServerCrudBundle\DataMapping\DataMapperInterface;
 use Modera\ServerCrudBundle\DependencyInjection\ModeraServerCrudExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Modera\ServerCrudBundle\Controller\AbstractCrudController;
@@ -22,7 +23,8 @@ class AbstractCrudControllerTest extends \PHPUnit\Framework\TestCase
         $container->setParameter(ModeraServerCrudExtension::CONFIG_KEY, $config);
         $container->compile();
 
-        \Phake::when($container)->get('configDefinedMapper')->thenReturn(true);
+        $dataMapper = \Phake::mock(DataMapperInterface::class);
+        \Phake::when($container)->get('configDefinedMapper')->thenReturn($dataMapper);
 
         /** @var AbstractCrudController $controller */
         $controller = \Phake::partialMock('Modera\ServerCrudBundle\Controller\AbstractCrudController');
@@ -32,7 +34,7 @@ class AbstractCrudControllerTest extends \PHPUnit\Framework\TestCase
             array('entity' => 'testValue', 'hydration' => 'testValue')
         );
 
-        $this->assertTrue(\Phake::makeVisible($controller)->getDataMapper());
+        $this->assertSame($dataMapper, \Phake::makeVisible($controller)->getDataMapper());
     }
 
     /**
@@ -47,7 +49,8 @@ class AbstractCrudControllerTest extends \PHPUnit\Framework\TestCase
         $container->setParameter(ModeraServerCrudExtension::CONFIG_KEY, $config);
         $container->compile();
 
-        \Phake::when($container)->get('configDefinedMapper')->thenReturn(true);
+        $dataMapper = \Phake::mock(DataMapperInterface::class);
+        \Phake::when($container)->get('configDefinedMapper')->thenReturn($dataMapper);
 
         /** @var AbstractCrudController $controller */
         $controller = \Phake::partialMock('Modera\ServerCrudBundle\Controller\AbstractCrudController');
@@ -71,9 +74,10 @@ class AbstractCrudControllerTest extends \PHPUnit\Framework\TestCase
         $container->setParameter(ModeraServerCrudExtension::CONFIG_KEY, $config);
         $container->compile();
 
-        \Phake::when($container)->get('configDefinedMapper')->thenReturn(false);
+        $dataMapper = \Phake::mock(DataMapperInterface::class);
+        \Phake::when($container)->get('configDefinedMapper')->thenReturn($dataMapper);
         \Phake::when($container)->has('existingService')->thenReturn(true);
-        \Phake::when($container)->get('existingService')->thenReturn(true);
+        \Phake::when($container)->get('existingService')->thenReturn($dataMapper);
 
         /** @var AbstractCrudController $controller */
         $controller = \Phake::partialMock('Modera\ServerCrudBundle\Controller\AbstractCrudController');
@@ -84,10 +88,12 @@ class AbstractCrudControllerTest extends \PHPUnit\Framework\TestCase
                 'create_default_data_mapper' => function (ContainerInterface $container) {
                     return $container->get('existingService');
                 },
-                'entity' => 'testValue', 'hydration' => 'testValue', )
+                'entity' => 'testValue',
+                'hydration' => 'testValue',
+            )
         );
 
-        $this->assertTrue(\Phake::makeVisible($controller)->getDataMapper());
+        $this->assertSame($dataMapper, \Phake::makeVisible($controller)->getDataMapper());
     }
 
     /**

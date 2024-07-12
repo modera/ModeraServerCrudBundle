@@ -8,71 +8,44 @@ namespace Modera\ServerCrudBundle\Persistence;
  */
 class DelegatePersistenceHandler implements PersistenceHandlerInterface
 {
-    /**
-     * @var PersistenceHandlerInterface
-     */
-    protected $delegate;
+    protected PersistenceHandlerInterface $delegate;
 
-    /**
-     * @param PersistenceHandlerInterface $delegate
-     */
     public function __construct(PersistenceHandlerInterface $delegate)
     {
         $this->delegate = $delegate;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function resolveEntityPrimaryKeyFields($entityClass)
+    public function resolveEntityPrimaryKeyFields(string $entityClass): array
     {
         return $this->delegate->resolveEntityPrimaryKeyFields($entityClass);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function save($entity)
+    public function save(object $entity): OperationResult
     {
         return $this->delegate->save($entity);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function update($entity)
+    public function update(object $entity): OperationResult
     {
         return $this->delegate->update($entity);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function updateBatch(array $entities)
+    public function updateBatch(array $entities): OperationResult
     {
         return $this->delegate->updateBatch($entities);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function query($entityClass, array $params)
+    public function query(string $entityClass, array $params): array
     {
         return $this->delegate->query($entityClass, $params);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function remove(array $entities)
+    public function remove(array $entities): OperationResult
     {
         return $this->delegate->remove($entities);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getCount($entityClass, array $params)
+    public function getCount(string $entityClass, array $params): int
     {
         return $this->delegate->getCount($entityClass, $params);
     }

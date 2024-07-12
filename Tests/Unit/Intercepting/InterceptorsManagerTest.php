@@ -6,7 +6,7 @@ use Modera\ServerCrudBundle\Controller\AbstractCrudController;
 use Modera\ServerCrudBundle\Intercepting\InterceptorsManager;
 use Modera\ServerCrudBundle\Intercepting\InvalidInterceptorException;
 use Modera\ServerCrudBundle\Tests\Fixtures\DummyInterceptor;
-use Sli\ExpanderBundle\Ext\ContributorInterface;
+use Modera\ExpanderBundle\Ext\ContributorInterface;
 
 require_once __DIR__.'/../../Fixtures/DummyInterceptor.php';
 

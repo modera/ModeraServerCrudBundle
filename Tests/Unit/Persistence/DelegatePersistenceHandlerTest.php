@@ -28,12 +28,12 @@ class DelegatePersistenceHandlerTest extends \PHPUnit\Framework\TestCase
     {
         \Phake::when($this->delegate)
             ->resolveEntityPrimaryKeyFields('foo')
-            ->thenReturn('bar-field')
+            ->thenReturn(['bar-field'])
         ;
 
         $result = $this->handler->resolveEntityPrimaryKeyFields('foo');
 
-        $this->assertEquals('bar-field', $result);
+        $this->assertEquals(['bar-field'], $result);
     }
 
     public function testSave()
@@ -73,7 +73,7 @@ class DelegatePersistenceHandlerTest extends \PHPUnit\Framework\TestCase
     {
         \Phake::when($this->delegate)
             ->query('foo', ['bar'])
-            ->thenReturn('mega-result')
+            ->thenReturn(['mega-result'])
         ;
 
         $result = $this->handler->query('foo', ['bar']);
@@ -82,7 +82,7 @@ class DelegatePersistenceHandlerTest extends \PHPUnit\Framework\TestCase
             ->query('foo', ['bar'])
         ;
 
-        $this->assertEquals('mega-result', $result);
+        $this->assertEquals(['mega-result'], $result);
     }
 
     public function testRemove()

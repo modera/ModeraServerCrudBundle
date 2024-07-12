@@ -2,7 +2,6 @@
 
 namespace Modera\ServerCrudBundle\Tests\Unit\Hydration;
 
-use Modera\ServerCrudBundle\Hydration\BadHydrationResultException;
 use Modera\ServerCrudBundle\Hydration\HydrationProfile;
 use Modera\ServerCrudBundle\Hydration\HydrationService;
 use Modera\ServerCrudBundle\Hydration\UnknownHydrationProfileException;
@@ -67,6 +66,7 @@ class HydrationServiceTest extends \PHPUnit\Framework\TestCase
         $this->config = array(
             'groups' => array(
                 'tags' => function () {
+                    return [];
                 },
                 'comments' => function (Article $e) {
                     $result = array();
@@ -160,7 +160,7 @@ class HydrationServiceTest extends \PHPUnit\Framework\TestCase
 
     public function testHydrateWithGroup()
     {
-        $result = $this->service->hydrate($this->article, $this->config, 'form', 'comments');
+        $result = $this->service->hydrate($this->article, $this->config, 'form', ['comments']);
 
         // when one group is specified then no grouping is used
         $this->assertTrue(is_array($result));
@@ -170,7 +170,7 @@ class HydrationServiceTest extends \PHPUnit\Framework\TestCase
         $this->assertArrayHasKey('body', $result[0]);
         $this->assertEquals($this->article->comments[0]->body, $result[0]['body']);
 
-        $result = $this->service->hydrate($this->article, $this->config, 'form', array('form', 'author'));
+        $result = $this->service->hydrate($this->article, $this->config, 'form', ['form', 'author']);
 
         $this->assertTrue(is_array($result));
         $this->assertEquals(2, count($result));
@@ -196,7 +196,7 @@ class HydrationServiceTest extends \PHPUnit\Framework\TestCase
 
     public function testHydrateWithNoResultGroupingAllowedButGroupSpecified()
     {
-        $result = $this->service->hydrate($this->article, $this->config, 'preview', 'list');
+        $result = $this->service->hydrate($this->article, $this->config, 'preview', ['list']);
 
         $expectedResult = array(
             'title' => 'Foo title',
@@ -212,14 +212,12 @@ class HydrationServiceTest extends \PHPUnit\Framework\TestCase
 
         try {
             $this->service->hydrate($this->article, $this->config, 'kaput');
-        } catch (BadHydrationResultException $e) {
+        } catch (\RuntimeException $e) {
             $thrownException = $e;
         }
 
         $this->assertNotNull($thrownException);
-        $this->assertEquals('show_stopper', $thrownException->getGroupName());
-        $this->assertInstanceOf(HydrationProfile::class, $thrownException->getProfile());
-        $this->assertInstanceOf('stdClass', $thrownException->getResult());
+        $this->assertEquals('Invalid hydrator definition', $thrownException->getMessage());
     }
 
     public function testWhenUnknownHydrationProfileIsSpecified()

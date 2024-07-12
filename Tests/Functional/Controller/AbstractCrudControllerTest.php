@@ -2,16 +2,17 @@
 
 namespace Modera\ServerCrudBundle\Tests\Functional\Controller;
 
+use Doctrine\ORM\Tools\SchemaTool;
 use Modera\FoundationBundle\Testing\FunctionalTestCase;
 use Modera\ServerCrudBundle\Controller\AbstractCrudController;
 use Modera\ServerCrudBundle\Hydration\HydrationProfile;
 use Doctrine\ORM\Mapping as Orm;
 use Modera\ServerCrudBundle\Tests\Fixtures\Bundle\Contributions\ControllerActionInterceptorsProvider;
 use Symfony\Component\Validator\Constraints as Assert;
-use Sli\AuxBundle\Util\Toolkit;
 
 class DummyException extends \RuntimeException
-{}
+{
+}
 
 /**
  * @Orm\Entity
@@ -84,7 +85,7 @@ class DummyArticle
 
 class DataController extends AbstractCrudController
 {
-    public function getConfig()
+    public function getConfig(): array
     {
         return array(
             'entity' => DummyArticle::class,
@@ -125,28 +126,38 @@ class DataController extends AbstractCrudController
  */
 class AbstractCrudControllerTest extends FunctionalTestCase
 {
+    /**
+     * @var SchemaTool
+     */
+    private static $st;
+
     /* @var DataController */
     private $controller;
 
     // override
-    public function doSetUp()
+    public function doSetUp(): void
     {
         $this->controller = new DataController();
-        $this->controller->setContainer(self::$container);
+        $this->controller->setContainer(self::getContainer());
 
         DummyArticle::$suicideEngaged = false;
     }
 
     // override
-    public static function doSetUpBeforeClass()
+    public static function doSetUpBeforeClass(): void
     {
-        Toolkit::createTableFoEntity(self::$em, DummyArticle::class);
+        self::$st = new SchemaTool(self::$em);
+        self::$st->createSchema([
+            self::$em->getClassMetadata(DummyArticle::class),
+        ]);
     }
 
     // override
-    public static function doTearDownAfterClass()
+    public static function doTearDownAfterClass(): void
     {
-        Toolkit::dropTableForEntity(self::$em, DummyArticle::class);
+        self::$st->dropSchema([
+            self::$em->getClassMetadata(DummyArticle::class),
+        ]);
     }
 
     /**
@@ -154,7 +165,7 @@ class AbstractCrudControllerTest extends FunctionalTestCase
      */
     private function getDummyInterceptor()
     {
-        return self::$container->get('modera_server_crud_dummy_bundle.contributions.controller_action_interceptors_provider');
+        return self::getContainer()->get('modera_server_crud_dummy_bundle.contributions.controller_action_interceptors_provider');
     }
 
     private function assertValidInterceptorInvocation($requestParams, $type)

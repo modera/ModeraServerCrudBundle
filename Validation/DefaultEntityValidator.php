@@ -4,7 +4,6 @@ namespace Modera\ServerCrudBundle\Validation;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Validator\ConstraintViolationInterface;
-//use Symfony\Component\Validator\ValidatorInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
@@ -13,35 +12,32 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  */
 class DefaultEntityValidator implements EntityValidatorInterface
 {
-    private $validator;
-    private $container;
+    private ValidatorInterface $validator;
+    private ContainerInterface $container;
 
-    /**
-     * @param ValidatorInterface $validator
-     * @param ContainerInterface $container
-     */
     public function __construct(ValidatorInterface $validator, ContainerInterface $container)
     {
         $this->validator = $validator;
         $this->container = $container;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function validate($entity, array $config)
+    public function validate(object $entity, array $config): ValidationResult
     {
         $validationResult = new ValidationResult();
 
+        /** @var array{
+         *      'ignore_standard_validator': bool,
+         *      'entity_validation_method': false|string,
+         *  } $config
+         */
         if (false === $config['ignore_standard_validator']) {
+            /** @var ConstraintViolationInterface $violation */
             foreach ($this->validator->validate($entity) as $violation) {
-                /* @var ConstraintViolationInterface $violation */
-
                 $validationResult->addFieldError($violation->getPropertyPath(), $violation->getMessageTemplate());
             }
         }
 
-        if (false !== $config['entity_validation_method'] && in_array($config['entity_validation_method'], get_class_methods($entity))) {
+        if (false !== $config['entity_validation_method'] && \in_array($config['entity_validation_method'], \get_class_methods($entity))) {
             $methodName = $config['entity_validation_method'];
 
             $entity->$methodName($validationResult, $this->container);

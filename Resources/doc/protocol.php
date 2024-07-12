@@ -2,89 +2,89 @@
 
 // create
 
-$createActionRequestPayload = array(
-    'hydration' => array(
+$createActionRequestPayload = [
+    'hydration' => [
         'profile' => 'new_record',
-    ),
-    'record' => array(
+    ],
+    'record' => [
         'title' => 'Some title',
         'body' => 'Some text goes here',
-    ),
-);
+    ],
+];
 
-$successfulCreateActionResponse = array(
+$successfulCreateActionResponse = [
     'success' => true,
-    'created_models' => array(
+    'created_models' => [
         'article',
-    ),
-    'result' => array(
+    ],
+    'result' => [
         'id' => 1,
         'title' => 'Some title',
         'body' => 'Some text goes here',
-    ),
-);
+    ],
+];
 
-$validationFailedCreateActionResponse = array(
+$validationFailedCreateActionResponse = [
     'success' => false,
-    'field_errors' => array(
-        'title' => array(
+    'field_errors' => [
+        'title' => [
             'Title is too short',
-        ),
-    ),
-    'general_errors' => array(
+        ],
+    ],
+    'general_errors' => [
         'Admin has disabled functionality of adding new articles',
-    ),
-);
+    ],
+];
 
 // list
 
-$listActionRequestPayload = array(
-    'hydration' => array(
+$listActionRequestPayload = [
+    'hydration' => [
         'profile' => 'list',
-    ),
-    'filter' => array(
-        array(
+    ],
+    'filter' => [
+        [
             'property' => 'category',
             'value' => 'eq:1',
-        ),
-        array(
+        ],
+        [
             'property' => 'isPublished',
             'value' => 'eq:true',
-        ),
-    ),
-    'fetch' => array(
+        ],
+    ],
+    'fetch' => [
         'author',
-    ),
+    ],
     'limit' => 25,
-);
+];
 
-$listActionResponse = array(
+$listActionResponse = [
     'success' => true,
-    'items' => array(
-        array(
+    'items' => [
+        [
             'title' => 'Some title',
             'body' => 'Some text goes here',
-        ),
-    ),
-);
+        ],
+    ],
+];
 
 // misc
 
-$exceptionResponseInDev = array(
+$exceptionResponseInDev = [
     'success' => false,
     'exception_class' => 'RuntimeException',
-    'stack_trace' => array(
+    'stack_trace' => [
         '-',
         '--',
         '---',
-    ),
+    ],
     'file' => 'FooController.php',
     'message' => 'Something went terribly wrong',
     'code' => '123',
     'line' => '123',
-);
+];
 
-$exceptionResponseInProd = array(
+$exceptionResponseInProd = [
     'success' => false,
     'message' => 'Some preconfigured default message',
-);
+];

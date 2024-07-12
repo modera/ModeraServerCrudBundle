@@ -8,10 +8,7 @@ namespace Modera\ServerCrudBundle\ExceptionHandling;
  */
 class BypassExceptionHandler implements ExceptionHandlerInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function createResponse(\Exception $e, $operation)
+    public function createResponse(\Exception $e, string $operation): array
     {
         throw $e;
     }

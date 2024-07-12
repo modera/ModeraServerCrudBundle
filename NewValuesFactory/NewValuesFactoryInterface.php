@@ -15,10 +15,10 @@ interface NewValuesFactoryInterface
      * Must return an array or instances of \stdClass ( something that can be serialized and sent back to client-side )
      * that will be used on client-side as default values for a new record.
      *
-     * @param array $params
-     * @param array $config
+     * @param array<string, mixed> $params
+     * @param array<string, mixed> $config
      *
-     * @return array
+     * @return array<string, mixed>
      */
-    public function getValues(array $params, array $config);
+    public function getValues(array $params, array $config): array;
 }

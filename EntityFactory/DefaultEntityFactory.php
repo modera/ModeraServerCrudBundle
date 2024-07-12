@@ -2,34 +2,29 @@
 
 namespace Modera\ServerCrudBundle\EntityFactory;
 
-use Sli\AuxBundle\Util\Toolkit;
-
 /**
  * @author    Sergei Lissovski <sergei.lissovski@modera.org>
  * @copyright 2013 Modera Foundation
  */
 class DefaultEntityFactory implements EntityFactoryInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function create(array $params, array $config)
+    public function create(array $params, array $config): object
     {
+        /** @var string $entityClass */
         $entityClass = $config['entity'];
 
-        // if __construct method doesn't have any mandatory parameters the we will use it
+        // if __construct method doesn't have any mandatory parameters, we will use it
         $useConstructor = false;
-        foreach (Toolkit::getReflectionMethods($entityClass) as $reflMethod) {
-            /* @var \ReflectionMethod $reflMethod */
-            if ($reflMethod->getName() == '__construct'
-                && $reflMethod->isPublic()) {
-                if (count($reflMethod->getParameters()) == 0) {
+        foreach ($this->getEntityMethods($entityClass) as $refMethod) {
+            if ('__construct' === $refMethod->getName()
+                && $refMethod->isPublic()) {
+                if (0 === \count($refMethod->getParameters())) {
                     $useConstructor = true;
                 } else { // if all parameters are optional we still can use constructor
                     $allParametersOptional = true;
-                    foreach ($reflMethod->getParameters() as $reflParam) {
-                        /* @var \ReflectionParameter $reflParam */
-                        if (!$reflParam->isOptional()) {
+                    foreach ($refMethod->getParameters() as $refParameter) {
+                        /** @var \ReflectionParameter $refParameter */
+                        if (!$refParameter->isOptional()) {
                             $allParametersOptional = false;
                         }
                     }
@@ -39,11 +34,40 @@ class DefaultEntityFactory implements EntityFactoryInterface
         }
 
         if ($useConstructor) {
-            return new $entityClass();
+            $entity = new $entityClass();
         } else {
-            $serialized = sprintf('O:%u:"%s":0:{}', strlen($entityClass), $entityClass);
-
-            return unserialize($serialized);
+            $serialized = \sprintf('O:%u:"%s":0:{}', \strlen($entityClass), $entityClass);
+            $entity = \unserialize($serialized);
         }
+
+        /** @var object $entity */
+        $entity = $entity;
+
+        return $entity;
+    }
+
+    /**
+     * @return array<string, \ReflectionMethod>
+     */
+    private function getEntityMethods(string $entityClass): array
+    {
+        /** @var class-string $className */
+        $className = $entityClass;
+
+        $refClass = new \ReflectionClass($className);
+
+        $arr = [];
+        foreach ($refClass->getMethods() as $refMethod) {
+            $arr[$refMethod->getName()] = $refMethod;
+        }
+        if ($refClass->getParentClass()) {
+            foreach ($this->getEntityMethods($refClass->getParentClass()->getName()) as $methodName => $refMethod) {
+                if (!\array_key_exists($methodName, $arr)) {
+                    $arr[$methodName] = $refMethod;
+                }
+            }
+        }
+
+        return $arr;
     }
 }

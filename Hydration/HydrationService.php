@@ -4,6 +4,7 @@ namespace Modera\ServerCrudBundle\Hydration;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 /**
  * Service is responsible for converting given entity/entities to something that can be sent back to client-side.
@@ -13,12 +14,10 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
  */
 class HydrationService
 {
-    private $container;
-    private $accessor;
+    private ContainerInterface $container;
 
-    /**
-     * @param ContainerInterface $container
-     */
+    private PropertyAccessorInterface $accessor;
+
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
@@ -26,101 +25,98 @@ class HydrationService
     }
 
     /**
-     * @param mixed  $hydrator
-     * @param object $object
+     * @param callable|string[]|array<string, string>|mixed $hydrator
+     * @param array<string, mixed>|object                   $objectOrArray
      *
-     * @return array
+     * @return array<mixed>
      */
-    private function invokeHydrator($hydrator, $object)
+    private function invokeHydrator($hydrator, /* array|object */ $objectOrArray): array
     {
-        if (is_callable($hydrator)) {
-            return $hydrator($object, $this->container);
-        } elseif (is_array($hydrator)) {
-            $result = array();
+        if (\is_callable($hydrator)) {
+            $result = $hydrator($objectOrArray, $this->container);
+            if (\is_array($result)) {
+                return $result;
+            }
+        } elseif (\is_array($hydrator)) {
+            $result = [];
 
             foreach ($hydrator as $key => $propertyPath) {
-                $key = is_numeric($key) ? $propertyPath : $key;
+                $key = \is_numeric($key) ? $propertyPath : $key;
 
                 try {
-                    $result[$key] = $this->accessor->getValue($object, $propertyPath);
+                    $result[$key] = $this->accessor->getValue($objectOrArray, $propertyPath);
                 } catch (\Exception $e) {
-                    throw new \RuntimeException(
-                        "Unable to resolve expression '$propertyPath' on ".get_class($object), null, $e
-                    );
+                    $message = \sprintf("Unable to resolve expression '%s'", $propertyPath);
+                    if (\is_object($objectOrArray)) {
+                        $message .= \sprintf(' on %s', \get_class($objectOrArray));
+                    }
+
+                    throw new \RuntimeException($message, 0, $e);
                 }
             }
 
             return $result;
         }
 
-        return 'Invalid hydrator definition';
+        throw new \RuntimeException('Invalid hydrator definition');
     }
 
-    private function mergeHydrationResult(array $currentResult, $hydratorResult, HydrationProfile $profile, $groupName)
+    /**
+     * @param array<mixed> $currentResult
+     * @param array<mixed> $hydratorResult
+     *
+     * @return array<mixed>
+     */
+    private function mergeHydrationResult(array $currentResult, array $hydratorResult, HydrationProfile $profile, string $groupName): array
     {
         if ($profile->isGroupingNeeded()) {
             $currentResult[$groupName] = $hydratorResult;
         } else {
-            // hydrators might also return some data structure that we can try to combine together
-            if (is_callable($hydratorResult)) {
-                $currentResult = $hydratorResult($currentResult);
-            } elseif (is_array($hydratorResult)) {
-                $currentResult = array_merge($currentResult, $hydratorResult);
-            } else {
-                throw BadHydrationResultException::create(
-                    'Hydration result must either be an array or a callable.',
-                    $hydratorResult,
-                    $profile,
-                    $groupName
-                );
-            }
+            $currentResult = \array_merge($currentResult, $hydratorResult);
         }
 
         return $currentResult;
     }
 
     /**
-     * @param object          $object
-     * @param array           $configAnalyzer
-     * @param string          $profile
-     * @param string|string[] $groups
+     * @param array<string, mixed>|object $objectOrArray
+     * @param array<string, mixed>        $config
+     * @param ?string[]                   $groups
      *
-     * @return array
+     * @return array<mixed>
      */
-    public function hydrate($object, array $config, $profile, $groups = null)
+    public function hydrate(/* array|object */ $objectOrArray, array $config, string $profileName, ?array $groups = null): array
     {
         $configAnalyzer = new ConfigAnalyzer($config);
-
-        /* @var HydrationProfile $profile */
-        $profile = $configAnalyzer->getProfileDefinition($profile);
+        $profile = $configAnalyzer->getProfileDefinition($profileName);
 
         if (null === $groups) { // going to hydrate all groups if none are explicitly specified
-            $result = array();
+            $result = [];
 
             foreach ($profile->getGroups() as $groupName) {
                 $hydrator = $configAnalyzer->getGroupDefinition($groupName);
 
-                $hydratorResult = $this->invokeHydrator($hydrator, $object);
+                $hydratorResult = $this->invokeHydrator($hydrator, $objectOrArray);
 
                 $result = $this->mergeHydrationResult($result, $hydratorResult, $profile, $groupName);
             }
 
             return $result;
         } else {
-            $groupsToUse = is_array($groups) ? array_values($groups) : array($groups);
+            $groupsToUse = \array_values($groups);
 
             // if there's only one group given then no grouping is going to be used
-            if (count($groupsToUse) == 1) {
+            if (1 === \count($groupsToUse)) {
                 $hydrator = $configAnalyzer->getGroupDefinition($groupsToUse[0]);
 
-                return $this->invokeHydrator($hydrator, $object);
+                return $this->invokeHydrator($hydrator, $objectOrArray);
             } else {
-                $result = array();
+                $result = [];
 
                 foreach ($groupsToUse as $groupName) {
                     $hydrator = $configAnalyzer->getGroupDefinition($groupName);
 
-                    $hydratorResult = $this->invokeHydrator($hydrator, $object);
+                    $hydratorResult = $this->invokeHydrator($hydrator, $objectOrArray);
 
                     $result = $this->mergeHydrationResult($result, $hydratorResult, $profile, $groupName);
                 }

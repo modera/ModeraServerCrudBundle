@@ -14,44 +14,37 @@ use Modera\ServerCrudBundle\Controller\AbstractCrudController;
 interface ControllerActionsInterceptorInterface
 {
     /**
-     * @param array                  $params
-     * @param AbstractCrudController $controller
+     * @param array<string, mixed> $params
      */
-    public function onCreate(array $params, AbstractCrudController $controller);
+    public function onCreate(array $params, AbstractCrudController $controller): void;
 
     /**
-     * @param array                  $params
-     * @param AbstractCrudController $controller
+     * @param array<string, mixed> $params
      */
-    public function onUpdate(array $params, AbstractCrudController $controller);
+    public function onUpdate(array $params, AbstractCrudController $controller): void;
 
     /**
-     * @param array                  $params
-     * @param AbstractCrudController $controller
+     * @param array<string, mixed> $params
      */
-    public function onBatchUpdate(array $params, AbstractCrudController $controller);
+    public function onBatchUpdate(array $params, AbstractCrudController $controller): void;
 
     /**
-     * @param array                  $params
-     * @param AbstractCrudController $controller
+     * @param array<string, mixed> $params
      */
-    public function onGet(array $params, AbstractCrudController $controller);
+    public function onGet(array $params, AbstractCrudController $controller): void;
 
     /**
-     * @param array                  $params
-     * @param AbstractCrudController $controller
+     * @param array<string, mixed> $params
      */
-    public function onList(array $params, AbstractCrudController $controller);
+    public function onList(array $params, AbstractCrudController $controller): void;
 
     /**
-     * @param array                  $params
-     * @param AbstractCrudController $controller
+     * @param array<string, mixed> $params
      */
-    public function onRemove(array $params, AbstractCrudController $controller);
+    public function onRemove(array $params, AbstractCrudController $controller): void;
 
     /**
-     * @param array                  $params
-     * @param AbstractCrudController $controller
+     * @param array<string, mixed> $params
      */
-    public function onGetNewRecordValues(array $params, AbstractCrudController $controller);
+    public function onGetNewRecordValues(array $params, AbstractCrudController $controller): void;
 }

@@ -3,7 +3,7 @@
 namespace Modera\ServerCrudBundle\Tests\Fixtures\Bundle\Contributions;
 
 use Modera\ServerCrudBundle\Tests\Fixtures\DummyInterceptor;
-use Sli\ExpanderBundle\Ext\ContributorInterface;
+use Modera\ExpanderBundle\Ext\ContributorInterface;
 
 /**
  * @author    Sergei Lissovski <sergei.lissovski@modera.org>
@@ -18,10 +18,10 @@ class ControllerActionInterceptorsProvider implements ContributorInterface
         $this->interceptor = new DummyInterceptor();
     }
 
-    public function getItems()
+    public function getItems(): array
     {
-        return array(
+        return [
             $this->interceptor,
-        );
+        ];
     }
 }
