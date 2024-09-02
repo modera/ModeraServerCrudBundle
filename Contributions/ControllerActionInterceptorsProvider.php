@@ -5,7 +5,6 @@ namespace Modera\ServerCrudBundle\Contributions;
 use Modera\ExpanderBundle\Ext\ContributorInterface;
 use Modera\ServerCrudBundle\Intercepting\ControllerActionsInterceptorInterface;
 use Modera\ServerCrudBundle\Security\SecurityControllerActionsInterceptor;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
@@ -21,10 +20,8 @@ class ControllerActionInterceptorsProvider implements ContributorInterface
      */
     private ?array $items = null;
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(AuthorizationCheckerInterface $authorizationChecker)
     {
-        /** @var AuthorizationCheckerInterface $authorizationChecker */
-        $authorizationChecker = $container->get('security.authorization_checker');
         $this->authorizationChecker = $authorizationChecker;
     }
 

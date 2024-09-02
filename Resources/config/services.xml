@@ -68,7 +68,7 @@
         <service id="modera_server_crud.contributions.controller_action_interceptors_provider"
                  class="Modera\ServerCrudBundle\Contributions\ControllerActionInterceptorsProvider">
 
-            <argument type="service" id="service_container" />
+            <argument type="service" id="security.authorization_checker" />
 
             <tag name="modera_server_crud.intercepting.cai_provider" />
         </service>
